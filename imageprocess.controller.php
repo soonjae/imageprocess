@@ -12,7 +12,7 @@ class imageprocessController extends imageprocess {
 	 **/
 	function init() 
 	{
-//		$GLOBALS['IMAGEPROCESSING'] = 0;
+
 	}
 
 	function triggerInsertFile(&$args) 
@@ -47,8 +47,7 @@ class imageprocessController extends imageprocess {
 		$file=$args->uploaded_filename;
 		$ext = strtolower(substr(strrchr($args->source_filename,'.'),1));
 
-//Image Rotate
-
+		//Image Rotate
 		if($file && $ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) ){
 			$exif = exif_read_data($file);
 	        if($exif['Orientation'] == '6' || $exif['Orientation'] == '3' || $exif['Orientation'] == '8') 
@@ -57,8 +56,7 @@ class imageprocessController extends imageprocess {
                 else $oImageprocessModel->GDrotate($file,$ext);
 			}
 		}
-
-		//Image Rotate 끝
+		//Image Rotate end
 
 		//여기부터 magic_conversion
 		$or_format = explode('|@|',$ipConfig->original_format);
@@ -152,36 +150,35 @@ class imageprocessController extends imageprocess {
 			else $oImageprocessModel->alphaWatermark($file,$ipConfig);
 		}
 
-        //여기부터 텍스트로고
-        $logo_mid=explode(";",$ipConfig->logo_mid);
-        if(!$ipConfig->logo_ext) $ipConfig->logo_ext="jpg";
-        $logo_ext_type ="/\.(".implode("|",explode(";",$ipConfig->logo_ext)).")$/i";
+        	//여기부터 텍스트로고
+        	$logo_mid=explode(";",$ipConfig->logo_mid);
+		if(!$ipConfig->logo_ext) $ipConfig->logo_ext="jpg";
+        	$logo_ext_type ="/\.(".implode("|",explode(";",$ipConfig->logo_ext)).")$/i";
 
-        if($ipConfig->textlogo_use == 'Y' && preg_match($logo_ext_type, $file) &&  (!$ipConfig->logo_mid || in_array($file_mid,$logo_mid)))
-        {
-            $logo = unserialize($ipConfig->each_logo);
-            if(isset($logo[$file_mid])) $ipConfig->textlogo = $logo[$file_mid];
-            $position = unserialize($ipConfig->each_position);
-            if(isset($position[$file_mid])) $ipConfig->logo_position = $position[$file_mid];
-            $fg = unserialize($ipConfig->each_fg);
-            if(isset($fg[$file_mid])) $ipConfig->logo_fg = $fg[$file_mid];
-            $bg = unserialize($ipConfig->each_bg);
-            if(isset($bg[$file_mid])) $ipConfig->logo_bg = $bg[$file_mid];
+        	if($ipConfig->textlogo_use == 'Y' && preg_match($logo_ext_type, $file) &&  (!$ipConfig->logo_mid || in_array($file_mid,$logo_mid)))
+        	{
+            		$logo = unserialize($ipConfig->each_logo);
+            		if(isset($logo[$file_mid])) $ipConfig->textlogo = $logo[$file_mid];
+            		$position = unserialize($ipConfig->each_position);
+            		if(isset($position[$file_mid])) $ipConfig->logo_position = $position[$file_mid];
+            		$fg = unserialize($ipConfig->each_fg);
+            		if(isset($fg[$file_mid])) $ipConfig->logo_fg = $fg[$file_mid];
+            		$bg = unserialize($ipConfig->each_bg);
+            		if(isset($bg[$file_mid])) $ipConfig->logo_bg = $bg[$file_mid];
 
 
-            list($width, $height,$type)=getimagesize($file);
-            if(!$type || $type > 3) return; //1:GIF, 2:JPG, 3:PNG
-            if($ipConfig->logo_minimum_width && ($ipConfig->logo_minimum_width > $height || $ipConfig->logo_minimum_width > $width)) return;
+            		list($width, $height,$type)=getimagesize($file);
+            		if(!$type || $type > 3) return; //1:GIF, 2:JPG, 3:PNG
+            		if($ipConfig->logo_minimum_width && ($ipConfig->logo_minimum_width > $height || $ipConfig->logo_minimum_width > $width)) return;
 
-            if($ipConfig->original_store == 'Y' && (!$ipConfig->store_mid || in_array($file_mid,$store_mid)))
-            {
-                $ofile=$oImageprocessModel->getOfile($file,$ipConfig->store_path);
-                if(!file_exists($ofile)) FileHandler::copyFile($file,$ofile); //@copy($file,$ofile);
-            }
-            if($ipConfig->magic_use == 'Y') $oImageprocessModel->magicTextLogo($file,$ipConfig);
-            else $oImageprocessModel->alphaTextLogo($file,$ipConfig);
-        }
-
+            		if($ipConfig->original_store == 'Y' && (!$ipConfig->store_mid || in_array($file_mid,$store_mid)))
+            		{
+               			$ofile=$oImageprocessModel->getOfile($file,$ipConfig->store_path);
+                		if(!file_exists($ofile)) FileHandler::copyFile($file,$ofile); //@copy($file,$ofile);
+            		}
+            		if($ipConfig->magic_use == 'Y') $oImageprocessModel->magicTextLogo($file,$ipConfig);
+            		else $oImageprocessModel->alphaTextLogo($file,$ipConfig);
+       		 }
 
 		//화일사이즈
 		if(preg_match("/\.(jpg|jpeg|gif|png)$/i", $file) && ($ipConfig->watermark_use == 'Y' || $ipConfig->resize_use == 'Y')) 
@@ -221,7 +218,7 @@ class imageprocessController extends imageprocess {
 	{
 		if(!$args->document_srls) return;
 
-        $GLOBALS['IMAGEPROCESSING']= 'true';
+        	$GLOBALS['IMAGEPROCESSING']= 'true';
 
 		$oImageprocessModel = &getModel('imageprocess');
 		$oModuleModel = &getModel('module');
@@ -229,14 +226,16 @@ class imageprocessController extends imageprocess {
 		$oDocumentModel = &getModel('document');
 		$document_srl_list = explode(',',$args->document_srls);
 
-		for($i=count($document_srl_list)-1;$i>=0;$i--) {
+		for($i=count($document_srl_list)-1;$i>=0;$i--) 
+		{
 			$document_srl = $document_srl_list[$i];
 			$oDocument = $oDocumentModel->getDocument($document_srl);
 			if(!$oDocument->isExists()) continue;
 
 			unset($obj);
 			$obj = $oDocument->getObjectVars();
-			if($module_srl != $obj->module_srl && $oDocument->hasUploadedFiles()) {
+			if($module_srl != $obj->module_srl && $oDocument->hasUploadedFiles()) 
+			{
 				$files = $oDocument->getUploadedFiles();
 				if(is_array($files))
 				{
@@ -300,34 +299,37 @@ class imageprocessController extends imageprocess {
 				//2014년 1월 3일 원본파일 다운로드 안되는 문제  소스 삽입 시작
 				$filename = $file_obj->source_filename;
 	            if(!file_exists($ofile)) return $this->stop('msg_file_not_found');
-    	        $fp = fopen($ofile, 'rb');
+    	            $fp = fopen($ofile, 'rb');
         	    if(!$fp) return $this->stop('msg_file_not_found');
-            	header("Cache-Control: "); 
+            	    header("Cache-Control: "); 
 	            header("Pragma: "); 
-    	        header("Content-Type: application/octet-stream"); 
+    	            header("Content-Type: application/octet-stream"); 
         	    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            	header("Content-Length: " .(string)($file_obj->file_size)); 
+            	    header("Content-Length: " .(string)($file_obj->file_size)); 
 	            header('Content-Disposition: attachment; filename="'.$filename.'"'); 
-    	        header("Content-Transfer-Encoding: binary\n");
-			   // if file size is lager than 10MB, use fread function (#18675748)
-				if (filesize($ofile) > 1024 * 1024) {
-				    while(!feof($fp)) echo fread($fp, 1024);
-				    fclose($fp);
-				} else {
-				    fpassthru($fp); 
-				}
-			   //2014년 1월 3일 원본파일 다운로드 안되는 문제 소스삽입 끝
+    	            header("Content-Transfer-Encoding: binary\n");
+		    // if file size is lager than 10MB, use fread function (#18675748)
+		    if (filesize($ofile) > 1024 * 1024) 
+		    {
+			while(!feof($fp)) echo fread($fp, 1024);
+			fclose($fp);
+		    } 
+		    else 
+		    {
+			fpassthru($fp); 
+		    }
+		    //2014년 1월 3일 원본파일 다운로드 안되는 문제 소스삽입 끝
 
-			}
 		}
-		elseif($oImageprocessModel->checkConvertedFile($file_obj))
-		{
-			$file_obj->uploaded_filename = $oImageprocessModel->checkConvertedFile($file_obj);
-			$file_obj->file_size = filesize($oImageprocessModel->checkConvertedFile($file_obj));
-		}
-
-		return $file_obj;
 	}
+	elseif($oImageprocessModel->checkConvertedFile($file_obj))
+	{
+		$file_obj->uploaded_filename = $oImageprocessModel->checkConvertedFile($file_obj);
+		$file_obj->file_size = filesize($oImageprocessModel->checkConvertedFile($file_obj));
+	}
+
+	return $file_obj;
+    }
 
 } 
 /* End of file imageprocess.controller.php */
