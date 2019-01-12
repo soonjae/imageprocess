@@ -27,7 +27,7 @@ class imageprocessAdminController extends imageprocess
 		$ipConfig->resize_quality = Context::get('resize_quality');
 		if($ipConfig->resize_quality >100) $ipConfig->resize_quality = 100;
 		elseif(!$ipConfig->resize_quality) $ipConfig->resize_quality = 80;
-        	$ipConfig->target_mid = str_replace('|@|',';', trim(Context::get('target_mid')));
+		$ipConfig->target_mid = str_replace('|@|',';', trim(Context::get('target_mid')));
 		$ipConfig->noresizegroup = str_replace('|@|',';',trim(Context::get('noresizegroup')));
 		if($ipConfig->resize_use != 'Y' && $ipConfig->watermark_use != 'Y') $ipConfig->original_store = 'N';       
  
@@ -37,7 +37,7 @@ class imageprocessAdminController extends imageprocess
 	}
 
 
-    	function procImageprocessAdminWatermarkSetup() 
+	function procImageprocessAdminWatermarkSetup() 
    	{
 		$oModuleController = &getController('module');
 		$oModuleModel = &getModel('module');
@@ -68,29 +68,29 @@ class imageprocessAdminController extends imageprocess
 		if($ipConfig->resize_use != 'Y' && $ipConfig->watermark_use != 'Y') $ipConfig->original_store = 'N';
 
 		$mids = explode(';',$ipConfig->water_mid);
-        	if(count($mids))
-        	{
-            		$watermark=array();
-            		$xmargin = array();
-           		$ymargin = array();
-            		$water_position = array();
-            		foreach($mids as $mid)
-            		{
-				$watermark[$mid] =  trim(Context::get('watermark_'.$mid));
-                		$xmargin[$mid] = Context::get('xmargin_'.$mid);
-                		$ymargin[$mid] = Context::get('ymargin_'.$mid);
-                		$water_position[$mid] = Context::get('water_position_'.$mid);
-            		}
+		if(count($mids))
+		{
+			$watermark=array();
+			$xmargin = array();
+			$ymargin = array();
+			$water_position = array();
+			foreach($mids as $mid)
+			{
+			$watermark[$mid] =  trim(Context::get('watermark_'.$mid));
+				$xmargin[$mid] = Context::get('xmargin_'.$mid);
+				$ymargin[$mid] = Context::get('ymargin_'.$mid);
+				$water_position[$mid] = Context::get('water_position_'.$mid);
+			}
 			$ipConfig->each_watermark = $watermark;
-           		$ipConfig->each_xmargin = $xmargin;
-           		$ipConfig->each_ymargin = $ymargin;
-            		$ipConfig->each_position = $water_position;
-        	}
-        	else $ipConfig->each_watermark = NULL;
+			$ipConfig->each_xmargin = $xmargin;
+			$ipConfig->each_ymargin = $ymargin;
+			$ipConfig->each_position = $water_position;
+		}
+		else $ipConfig->each_watermark = NULL;
 
 		$oModuleController->insertModuleConfig('imageprocess', $ipConfig);
-        	return new Object(0,"success_updated");
-   	 }
+		return new Object(0,"success_updated");
+   	}
 
 
 	function procImageprocessAdminOfileSetup() 
@@ -98,19 +98,19 @@ class imageprocessAdminController extends imageprocess
 		$oModuleController = &getController('module');
 		$oModuleModel = &getModel('module');
 
-	$ofolder = Context::get('store_path');
-	if($ofolder && !$this->checkfolder($ofolder)) return new Object(-1, 'checkfolder');
+		$ofolder = Context::get('store_path');
+		if($ofolder && !$this->checkfolder($ofolder)) return new Object(-1, 'checkfolder');
 
-	$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
+		$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
 
-	$ipConfig->store_path =$ofolder;
-	$ipConfig->original_store= Context::get('original_store');
-	$ipConfig->store_mid = str_replace('|@|',';',trim(Context::get('store_mid')));
-	$ipConfig->down_group = str_replace('|@|',';',trim(Context::get('down_group')));
+		$ipConfig->store_path =$ofolder;
+		$ipConfig->original_store= Context::get('original_store');
+		$ipConfig->store_mid = str_replace('|@|',';',trim(Context::get('store_mid')));
+		$ipConfig->down_group = str_replace('|@|',';',trim(Context::get('down_group')));
 
 		$oModuleController->insertModuleConfig('imageprocess', $ipConfig);
 
-	return new Object(0,"success_updated");
+		return new Object(0,"success_updated");
 	}
 
 	function procImageprocessAdminEtcSetup() 
