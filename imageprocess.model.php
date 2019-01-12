@@ -580,19 +580,8 @@ class imageprocessModel extends imageprocess
 	 **/
 	function getMidList($args = null) 
 	{
-		$output = executeQuery('imageprocess.getMidList', $args);
-		if(!$output->toBool()) return $output;
-
-		$list = $output->data;
-		if(!$list) return;
-
-		if(!is_array($list)) $list = array($list);
-
-		foreach($list as $val) 
-		{
-			$mid_list[$val->module_srl] = $val;
-		}
-		return $mid_list;
+		$oModuleModel = getModel('module');
+                return $oModuleModel->getMidList($args);
 	}
 	
 	function moveFile($out,$real) 
