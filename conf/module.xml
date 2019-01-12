@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<module>
+	<permissions />
+	<actions>
+		<action name="dispImageprocessAdminIndex" type="view" standalone="true" />
+		<action name="dispImageprocessAdminWatermark" type="view" standalone="true" />
+		<action name="dispImageprocessAdminOfile" type="view" standalone="true" />
+		<action name="dispImageprocessAdminEtc" type="view" standalone="true"  admin_index="true" />
+		<action name="dispImageprocessAdminTextlogo" type="view"  standalone="true" />
+
+		<action name="procImageprocessAdminEtcSetup" type="controller"  standalone="true" />
+		<action name="procImageprocessAdminSetup" type="controller"  standalone="true" />
+		<action name="procImageprocessAdminOfileSetup" type="controller"  standalone="true" />
+		<action name="procImageprocessAdminWatermarkSetup" type="controller"  standalone="true" />
+		<action name="procImageprocessAdminTextlogo" type="controller"  standalone="true" />
+
+	</actions>
+</module>

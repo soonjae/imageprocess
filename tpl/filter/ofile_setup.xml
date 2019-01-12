@@ -1,0 +1,13 @@
+<filter name="ofile_setup" module="imageprocess" act="procImageprocessAdminOfileSetup">
+	<form />
+	<parameter>
+		<param name="store_mid" target="store_mid" />
+		<param name="store_path" target="store_path" />
+		<param name="original_store" target="original_store" />
+		<param name="down_group" target="down_group" />
+	</parameter>
+	<response>
+		<tag name="error" />
+		<tag name="message" />
+	</response>
+</filter>

@@ -1,0 +1,19 @@
+<!--%import("css/imageProcess.css")-->
+<div class="x_page-header">
+<h1>
+{$lang->imageprocess} <span class="gray">{$lang->cmd_management}</span>
+</h1>
+</div>
+<p>{nl2br($lang->about_imageprocess)} ver.{$imageprocess_info->version}</p>
+<div class="header4">
+    <ul class="x_nav x_nav-tabs">
+        <li <!--@if($act=='dispImageprocessAdminIndex')-->class="x_active"<!--@end-->><a href="{getUrl('act','dispImageprocessAdminIndex','module','admin')}">{$lang->cmd_resize_use}</a></li>
+<li <!--@if($act=='dispImageprocessAdminWatermark')-->class="x_active"<!--@end-->><a href="{getUrl('act','dispImageprocessAdminWatermark','module','admin')}">{$lang->cmd_watermark}</a></li>
+	 <li <!--@if($act=='dispImageprocessAdminTextlogo')-->class="x_active"<!--@end-->><a href="{getUrl('act','dispImageprocessAdminTextlogo','module','admin')}">{$lang->cmd_textlogo}</a></li>
+<!--@if($imageprocess_info->resize_use =='Y' || $imageprocess_info->watermark_use == 'Y' || $imageprocess_info->textlogo_use == 'Y')-->
+        <li <!--@if($act=='dispImageprocessAdminOfile')-->class="x_active"<!--@end-->><a href="{getUrl('act','dispImageprocessAdminOfile','module','admin')}">{$lang->cmd_original_store}</a></li>
+<!--@end-->
+<li <!--@if($act=='dispImageprocessAdminEtc')-->class="x_active"<!--@end-->><a href="{getUrl('act','dispImageprocessAdminEtc','module','admin')}">{$lang->cmd_etc}</a></li>
+    </ul>
+</div>
+

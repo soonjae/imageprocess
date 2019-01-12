@@ -1,0 +1,78 @@
+<!--%import("./filter/imageprocess_setup.xml")-->
+<!--#include("./header.html")-->
+
+<form class="x_form-horizontal" action="./" method="get" onsubmit="return procFilter(this, imageprocess_setup);">
+
+<div class="x_control-group">
+		<label class="x_control-label" for="module_category_srl">{$lang->Resize_use}</label>
+<div class="x_controls">
+    <label class="x_inline"><input type="radio" id="resize_use_N" name="resize_use" value="N" <!--@if($imageprocess_info->resize_use !='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
+	<label class="x_inline"><input type="radio" id="resize_use_Y" name="resize_use" value="Y" <!--@if($imageprocess_info->resize_use=='Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
+      <br />      {$lang->msg_Resize_use}
+		</div>
+	</div>
+<div class="x_control-group">
+		<label class="x_control-label" for="module_category_srl">{$lang->Resize_width}</label>
+		<div class="x_controls">
+		<input type="text" name="resize_width" value="{$imageprocess_info->resize_width}" class="inputTypeText w40" /> px&nbsp;&nbsp;&nbsp;(*{$lang->imageprocess_notice1})
+</div>
+</div>
+<div class="x_control-group">
+		<label class="x_control-label" for="module_category_srl">{$lang->target_width}</label>
+		<div class="x_controls">
+		<label class="x_inline"><input type="radio" id="target_width_Y" name="target_width" value="Y" <!--@if(!$imageprocess_info->target_width || $imageprocess_info->target_width=='Y')-->checked="checked"<!--@end--> />{$lang->target_width_Y}</label>
+		<label class="x_inline"><input type="radio" id="target_width_N" name="target_width" value="N" <!--@if($imageprocess_info->target_width=='N')-->checked="checked"<!--@end--> />{$lang->target_width_N}</label>
+       <br /> * {$lang->msg_target_width}
+		</div>
+    </div>
+<div class="x_control-group">
+			<label class="x_control-label" for="module_category_srl">{$lang->resize_quality}</label>
+		<div class="x_controls">
+        <input type="text" name="resize_quality" value="{$imageprocess_info->resize_quality}" class="inputTypeText w40" > <br />{$lang->msg_resize_quality}i
+		</div>
+    </div>
+<div class="x_control-group">
+        <label class="x_control-label" for="module_category_srl">{$lang->nogroup}</label>
+        <div class="x_controls">
+            <!--@foreach($group_list as $key => $val)-->
+            <input type="checkbox" value="{$key}" name="noresizegroup" <!--@if(in_array($key,$imageprocess_info->noresizegroup))-->checked="checked"<!--@end--> id="member_group_{$key}"/> {$val->title} &nbsp;
+            <!--@end-->
+            <br>{$lang->msg_nogroup}
+        </div>
+    </div>
+</section>
+<section class="section">
+    <h1>{$lang->Resize_use}</h1>
+    <div class="x_control-group">{$lang->about_image_mid}
+	<div class="x_controls"></div>
+	</div>
+	<div class="x_control-group">
+            <label class="x_control-label">
+			<input type="checkbox" onclick="XE.checkboxToggleAll('target_mid'); return false;" /> Check All</label>
+	<div class="x_controls">
+	<fieldset>
+		<!--@foreach($mid_list as $module_category_srl => $modules)-->
+		<div class="module_category_title"><input type="checkbox" onclick="XE.checkboxToggleAll('target_mid', { wrap:'section_{$module_category_srl}' });" />
+		<!--@if($modules->title)--> {$modules->title} <!--@else-->
+		{$lang->none_category} <!--@end-->
+		</div>
+		<div id="section_{$module_category_srl}">
+		<!--@foreach($modules->list as $key => $val)-->
+		<div class="module_list">
+		<input type="checkbox" value="{$key}" name="target_mid" id="chk_target_mid_{$key}" <!--@if(in_array($key,$imageprocess_info->target_mid))-->checked="checked"<!--@end--> /> {$val->mid}({$val->browser_title})</div>
+		<!--@end--></div>
+		<!--@end--></fieldset>
+</div>
+</div>
+</section>
+
+    <div class="x_clearfix btnArea">
+        <div class="x_pull-left">
+        </div>
+        <div class="x_pull-right">
+            <button class="x_btn x_btn-primary" type="submit">{$lang->cmd_save}
+			</button>
+    </div>
+</div>
+</form>
+

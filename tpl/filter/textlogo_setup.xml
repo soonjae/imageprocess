@@ -1,0 +1,15 @@
+<filter name="textlogo_setup" module="imageprocess" act="procImageprocessAdminTextlogo">
+	<form>
+		<node target="logo_font_type" required="true" />
+		<node target="logo_position" required="true" />
+		<node target="textlogo_use" required="true" />
+		<node target="textlogo" required="true" />
+	</form>
+	<parameter>
+		<param name="nologogroup" target="nologogroup" />
+        </parameter>
+	<response>
+		<tag name="error" />
+		<tag name="message" />
+	</response>
+</filter>

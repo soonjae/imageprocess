@@ -1,0 +1,14 @@
+<filter name="watermark_setup" module="imageprocess" act="procImageprocessAdminWatermarkSetup">
+	<form />
+	<parameter>
+		<param name="watermark_use" target="watermark_use" />
+		<param name="minimum_width" target="minimum_width" />
+		<param name="water_mid" target="water_mid" />
+		<param name="ext" target="ext" />
+		<param name="water_position" target="water_position" />
+	</parameter>
+	<response>
+		<tag name="error" />
+		<tag name="message" />
+	</response>
+</filter>

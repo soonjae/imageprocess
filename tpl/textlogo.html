@@ -1,0 +1,149 @@
+<!--#include("./header.html")-->
+<!--%import("./filter/textlogo_setup.xml")-->
+<!--%import("./css/ipx.css")-->
+<!--%import("./css/colorpicker.css")-->
+<!--%import("./js/colorpicker.js")-->
+<!--%import("./js/ipx.js")-->
+
+
+<form class="x_form-horizontal" action="./" method="get" onsubmit="return procFilter(this, textlogo_setup);">
+<section class="section">
+	<!--@if(!count($external))-->
+	<div class="x_control-group">
+		{$lang->install_font}
+	</div>
+	<!--@else-->
+    <div class="x_control-group">
+	<label class="x_control-label">{$lang->textlogo_use}</label>
+		<div class="x_controls">
+			<label class="x_inline"><input type="radio" id="textlogo_use_N" name="textlogo_use" value="N" <!--@if($imageprocess_info->textlogo_use !='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
+            <label class="x_inline"><input type="radio" id="textlogo_use_Y" name="textlogo_use" value="Y" <!--@if($imageprocess_info->textlogo_use == 'Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
+           <br /> * {$lang->msg_textlogo_use}
+		</div>
+    </div>
+	<div class="x_control-group">
+    <label class="x_control-label">{$lang->msg_watermark_type}</label>
+        <div class="x_controls">
+		<!--@foreach($lang->ext_type as $val)-->
+	<label class="x_inline"><input type="checkbox" value="{$val}" name="logo_ext" <!--@if(in_array($val,$imageprocess_info->logo_ext))-->checked="checked"<!--@end--> /> .{$val}</label>
+		<!--@end--> {$lang->abount_target_watermark}
+		</div>
+	</div>
+	<div class="x_control-group">
+    <label class="x_control-label">{$lang->logo_quality}</label>
+        <div class="x_controls">
+		<input type="text" name="logo_quality" value="{$imageprocess_info->logo_quality}" class="inputTypeText w40" > <br /><br />{$lang->msg_water_quality}
+	</div>
+    </div>
+	<div class="x_control-group">
+    <label class="x_control-label">{$lang->logo_position}</label>
+	<div class="x_controls">
+				<!--@foreach($lang->logo_position_type as $key => $val)-->
+				<label class="x_inline"><input type="radio" id="textlogo_"{$key} name="logo_position" value="{$key}" <!--@if($imageprocess_info->logo_position == $key)-->checked="checked"<!--@end--> /> <!--@if(file_exists("./modules/imageprocess/tpl/images/".$key.".png"))--><br /><img src="./images/{$key}.png"><!--@end--><br /><span>{$val}</span></label>
+				<!--@end-->
+				<br />* {$lang->msg_logo_position}
+            </div>
+        </div>
+		<div class="x_control-group">
+    <label class="x_control-label">{$lang->textlogo}</label>
+		<div class="x_controls">
+		<input type="text" name="textlogo"	value="{$imageprocess_info->textlogo}" class="inputTypeText w300" /> <br /><br />{$lang->msg_textlogo}
+</div>
+	</div>
+		<div class="x_control-group">
+    <label class="x_control-label">{$lang->logo_font_type}</label>
+		<div class="x_controls">
+		<p class="fontname_toggle">{$lang->fontname_open}</p>
+		<!--@foreach($external as $k=>$v)-->
+        {@$info = pathinfo($v);    @$fn =  basename($v,'.'.$info['extension']); $f='./files/cache/imageprocess/'.$fn.'.png';}
+		<label class="x_inline"><input name ="logo_font_type" type="radio" value="{$v}" <!--@if($imageprocess_info->exfont == $v)--> checked="checked"<!--@end-->><br />
+            <!--@if(file_exists($f))--><img src='{$f}' alt='{$k}' title='{$k}' ><br /><!--@end-->
+		<p class="fontname">{$k}</p></label>
+		<!--@end-->
+		<br /><!--@if(count($external) <2)-->{$lang->about_one_font}<!--@else-->{$lang->about_font}<!--@end-->
+		</div>
+	</div>
+		<div class="x_control-group">
+    <label class="x_control-label">{$lang->logo_point}</label>
+	<div class="x_controls">
+		<input type="text" name="logo_point"	value="{$imageprocess_info->logo_point}" class="inputTypeText w100" /> pt <br />{$lang->msg_logo_point}
+		</div>
+		</div>
+	<div class="x_control-group">
+    <label class="x_control-label">{$lang->logo_style}</label>
+	<div class="x_controls">	
+				<!--@foreach($lang->logo_style_type as $key => $val)-->
+				<label  class="x_inline"><input type="radio" id="logo_style_"{$key} name="logo_style" value="{$key}" <!--@if($imageprocess_info->logo_style == $key)-->checked="checked"<!--@end--> /> <!--@if(file_exists("./modules/imageprocess/tpl/images/".$key.".png"))--><br /><img src="./images/{$key}.png"><!--@end--><br /><span>{$val}</span></label>
+				<!--@end-->
+		<br /> {$lang->about_font_style}
+		</div>
+	</div>
+        <div class="x_control-group">
+    <label class="x_control-label">{$lang->cmd_logo_color}</label>
+    <div class="x_controls">
+        
+		<span>{$lang->cmd_logo_fg} : <input type="text" name="logo_fg" id="colorpick1" value="<!--@if($imageprocess_info->logo_fg)-->{preg_replace('/^#/','',$imageprocess_info->logo_fg)}<!--@else-->ffffff<!--@end-->" /> {$lang->msg_logo_fg}</span><br />
+        <span>{$lang->cmd_logo_bg} : <input type="text" name="logo_bg" id="colorpick2" value="<!--@if($imageprocess_info->logo_bg)-->{preg_replace('/^#/','',$imageprocess_info->logo_bg)}<!--@else-->000000<!--@end-->" /> {$lang->msg_logo_bg}</span>
+        <br />{$lang->msg_logo_color}
+
+        </div>
+    </div>
+        <div class="x_control-group">
+    <label class="x_control-label">{$lang->minimum_width}}</label>
+    <div class="x_controls">
+        <input type="text" name="logo_minimum_width" value="{$imageprocess_info->logo_minimum_width}" class="inputTypeText w40" />px <br /><br />* {$lang->msg_minimum_width}
+	</div>
+    </div>
+		<div class="x_control-group">
+        <label class="x_control-label" for="module_category_srl">{$lang->nogroup}</label>
+        <div class="x_controls">
+            <!--@foreach($group_list as $key => $val)-->
+            <input type="checkbox" value="{$key}" name="noLogoGroup" <!--@if(in_array($key,$imageprocess_info->nologogroup))-->checked="checked"<!--@end--> id="member_group_{$key}"/> {$val->title} ;
+            <!--@end-->
+            <br>{$lang->msg_nogroup}
+        </div>
+    </div>
+</section
+
+<section class="section">
+    <h1>{$lang->textlogo_use}</h1>
+<div class="x_control-group">{$lang->about_image_mid}</div>
+<div class="x_controls"></div>
+<div class="x_control-group">
+            <label class="x_control-label">
+        <input type="checkbox" onclick="XE.checkboxToggleAll('logo_mid'); return false;" /> Check All</label>
+<div class="x_controls">
+<fieldset>
+        <!--@foreach($mid_list as $module_category_srl => $modules)-->
+        <div class="module_category_title"><input type="checkbox" onclick="XE.checkboxToggleAll('logo_mid', { wrap:'section_{$module_category_srl}' });" /><!--@if($modules->title)--> {$modules->title} <!--@else-->{$lang->none_category}<!--@end--></div>
+        <div id="section_{$module_category_srl}"><!--@foreach($modules->list as $key => $val)-->
+			<div class="module_list">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="{$key}" name="logo_mid" id="chk_logo_mid_{$key}" <!--@if(in_array($key,$imageprocess_info->logo_mid))-->checked="checked"<!--@end--> /> {$val->mid} ({$val->browser_title})
+			
+			<div class="each_logo" <!--@if(!in_array($key,$imageprocess_info->logo_mid))-->style="display:none;"<!--@end-->>
+			<input type="text" name="logo_{$key}" value="{$logo[$key]}" />
+			<select name="position_{$key}">
+			<option value=''>{$lang->logo_position}</option>
+
+			<!--@foreach($lang->logo_position_type as $k => $v)-->
+			<option value="{$k}" <!--@if($position[$key] == $k)-->selected="selected"<!--@end-->>{$v} </option>
+			<!--@end-->
+			</select>
+			{$lang->cmd_logo_fg} : <input style="width:50px;" type="text" name="fg_{$key}" id="colorpick1" value="<!--@if($fg[$key])-->{preg_replace('/^#/','',$fg[$key])}<!--@else-->{preg_replace('/^#/','',$imageprocess_info->logo_fg)}<!--@end-->" /> 
+		
+			{$lang->cmd_logo_bg} : <input type="text"  style="width:50px;" name="bg_{$key}" id="colorpick2" value="<!--@if($bg[$key])-->{preg_replace('/^#/','',$bg[$key])}<!--@else-->{preg_replace('/^#/','',$imageprocess_info->logo_bg)}<!--@end-->" />
+			
+			</div>
+		</div>
+        <!--@end--></div>
+        <!--@end--></div></div>
+	<!--@end-->
+</section>
+
+    <div class="x_clearfix btnArea">
+        <div class="x_pull-left">
+        </div>
+        <div class="x_pull-right">
+            <button class="x_btn x_btn-primary" type="submit">{$lang->cmd_save}</button>
+    </div>
+</div>
+</form>

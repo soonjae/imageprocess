@@ -1,0 +1,69 @@
+<!--%import("./js/imageProcess.js")-->
+<!--%import("./filter/etc_setup.xml")-->
+<!--#include("./header.html")-->
+<form class="x_form-horizontal" action="./" method="get" onsubmit="return procFilter(this, etc_setup);">
+<div class="x_control-group" cond="$EXIF">
+            <label class="x_control-label" for="rotate_use">{$lang->rotate_use}</label>
+            <div class="x_controls" id="rotate_use">
+            <label class="x_inline"><input type="radio" id="rotate_use_N" name="rotate_use" value="N" <!--@if($imageprocess_info->rotate_use!='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
+            <label class="x_inline"><input type="radio" id="rotate_use_Y" name="rotate_use" value="Y" <!--@if($imageprocess_info->rotate_use == 'Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
+         <br /> * {$lang->msg_rotate_use}
+        </div>
+    </div>
+	<div class="x_control-group" cond="!$EXIF">
+            <label class="x_control-label" for="rotate_use">{$lang->rotate_use}</label>
+            <div class="x_controls" id="rotate_use">
+            <label class="x_inline"><input type="radio" id="rotate_use_N" name="rotate_use" value="N" disabled />{$lang->notuse}</label>
+            <label class="x_inline"><input type="radio" id="rotate_use_Y" name="rotate_use" value="N" disabled /></label>
+         <br /> * {$lang->msg_rotate_no_use}
+        </div>
+    </div>
+        <div class="x_control-group" id="magic_use">
+			<label class="x_control-label" for="magic_use">{$lang->magic_use}</label>
+		<div class="x_controls">
+			<label class="x_inline"><input type="radio" id="magic_use_N" name="magic_use" value="N" <!--@if($imageprocess_info->magic_use!='Y')-->checked="checked"<!--@end--> />{$lang->gd}</label>
+            <label class="x_inline"><input type="radio" id="magic_use_Y" name="magic_use" value="Y" <!--@if($imageprocess_info->magic_use == 'Y')-->checked="checked"<!--@end--> />{$lang->magic}</label>
+       <br />  * {$lang->msg_magic_use}
+        </div>
+    </div>
+<div id="magic_conversion">
+    <div class="x_control-group">
+            <label class="x_control-label" for="magic_path">{$lang->magic_path}</label>
+		<div class="x_controls">
+		<input type="text" name="magic_path" value="<!--@if(!$imageprocess_info->magic_path && $magic_path)-->{$magic_path}<!--@else-->{$imageprocess_info->magic_path}<!--@end-->" class="inputTypeText w400" />
+		<br />{$lang->msg_magic_path}
+		<!--@if($magic_path)--><br /><font color=red>{$magic_path}</font>{$lang->mgaic_installed}<!--@end-->
+		</div>
+    </div>
+
+<div class="x_control-group">
+	<label class="x_control-label" for="magic_conversion">{$lang->magic_conversion}</label>
+		<div class="x_controls">
+		<label class="x_inline"><input type="radio"  name="magic_conversion" value="N" <!--@if($imageprocess_info->magic_conversion!='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
+            <label class="x_inline"><input type="radio"  name="magic_conversion" value="Y" <!--@if($imageprocess_info->magic_conversion == 'Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
+            <br />	* {$lang->msg_magic_conversion}
+		</div>
+</div>
+<div class="x_control-group"  id="magic_conversion">
+		{@$original = explode('|@|',$imageprocess_info->original_format)}
+	<label class="x_control-label" for="magic_conversion">		{$lang->original_format}</label>
+	<div class="x_controls">
+		<!--@foreach($lang->original_format_type as $key=>$val)--><label class="x_inline"><input type="checkbox" name="original_format" value="{$key}"  <!--@if(in_array($key,$original))-->checked="checked"<!--@end-->>{$val} </label> <!--@end--> 
+		<br />{$lang->about_raw_format}
+		</div></div>
+<div class="x_control-group" id="target_format">
+	 <label class="x_control-label" for="trans_format">	{$lang->trans_format}</label>
+	<div class="x_controls">
+	<!--@foreach($lang->ext_type as $val)-->
+	<label class="x_inline"><input type="radio" name="target_format" value="{$val}" <!--@if($val==$imageprocess_info->target_format)-->checked="checked"<!--@end-->>{$val} </label> 
+	<!--@end-->
+         </div>
+        </div>
+    </div>
+<div class="x_clearfix btnArea">
+		<div class="x_pull-left"></div>
+	<div class="x_pull-right">
+<button class="x_btn x_btn-primary" type="submit">{$lang->cmd_save}</button></div>
+</div>
+</form>
+

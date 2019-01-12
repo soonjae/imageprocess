@@ -1,0 +1,13 @@
+.module_category_title { border:1px solid #DDDDDD; margin:10px 5px 5px 0; padding:3px 3px 3px 9px; }
+.module_list { margin:0 0 5px 10px; }
+td ul li {display:inline-block; margin:2px; border-left:5px;}
+li span {font-size:8pt}
+li img {border:1px solid #DDDDDD; margin:2px ; padding:2px;}
+#font {margin:0;padding:0;}
+#font li {display:inline-block; margin:7px 2px;; border-left:5px;padding:5px;}
+#font li img {border:1px solid #cccccc; margin:2px; padding:2px;}
+.logo_style {margin:0;padding:0;}
+.logo_style li {display:inline-block; margin:7px 2px;; border-left:5px;padding:5px;}
+.logo_style li img {border:1px solid #cccccc; margin:2px; padding:2px;}
+#colorpick1,#colorpick2 {width:60px;}
+

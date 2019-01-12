@@ -1,0 +1,13 @@
+<filter name="imageprocess_setup" module="imageprocess" act="procImageprocessAdminSetup">
+	<form />
+	<parameter>
+		<param name="resize_use" target="resize_use" />
+		<param name="resize_width" target="resize_width" />
+		<param name="target_mid" target="target_mid" />
+		<param name="resize_quality" target="resize_quality" />
+	</parameter>
+	<response>
+		<tag name="error" />
+		<tag name="message" />
+	</response>
+</filter>

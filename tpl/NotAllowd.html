@@ -1,0 +1,37 @@
+<!--%import("css/NotAllowed.css")-->
+
+<h3>{$lang->imageResize} <span class="gray">{$lang->cmd_management}</span></h3>
+<div class="infoText">{nl2br($lang->about_imageResize)}</div>
+
+<div class="gap1"></div>
+
+<table cellspacing="0" class="adminTable">
+	<col width="150px" />
+	<col />
+	<caption>{$lang->env_information_error}</caption>
+	<tr>
+		<!--@if($env_error->msg=="php")-->
+		<td>{$lang->env_phpversion}</td>
+		<td><!--@foreach($env_error->info as $value) -->{$value}.<!--@end-->&nbsp;&nbsp;>=&nbsp;&nbsp;{$lang->env_req_phpversion}.</td>
+		<!--@elseif($env_error->msg=="gd_load")-->
+		<td>{$lang->env_gd}</td>
+		<td>{$lang->env_gd_load}</td>
+		<!--@elseif($env_error->msg=="gd_version")-->
+		<td>{$lang->env_gd}</td>
+		<td>
+
+
+<table id="gd_info" cellpadding="3" border="0" width="600px">
+<caption>{$lang->error_code} = {$env_error->code}</caption>
+<col width="240px" />
+<tbody>
+<!--@foreach($env_error->info as $key =>$val )-->
+<tr><td class="e">{$key}</td><td class="v"><!--@if(gettype($val)=="string") -->{$val}<!--@elseif(gettype($val)=="boolean") --><!--@if($val) -->{$lang->enabled}<!--@end --><!--@end --></td></tr>
+<!--@end-->
+</tbody></table>
+
+		
+		</td>
+		<!--@end-->
+	</tr>
+</table>

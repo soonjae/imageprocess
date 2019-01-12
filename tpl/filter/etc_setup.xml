@@ -1,0 +1,12 @@
+<filter name="etc_setup" module="imageprocess" act="procImageprocessAdminEtcSetup">
+	<form />
+	<parameter>
+		<param name="magic_use" target="magic_use" />
+		<param name="magic_path" target="magic_path" />
+		<param name="change_kfile" target="change_kfile" />
+	</parameter>
+	<response>
+		<tag name="error" />
+		<tag name="message" />
+	</response>
+</filter>

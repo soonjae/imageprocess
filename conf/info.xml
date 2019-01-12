@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="0.2">
+	<title xml:lang="ko">이미지 프로세스</title>
+	<title xml:lang="jp">イメ―ジプロセス</title>
+	<title xml:lang="en">ImageProcessing Module</title>
+	<description xml:lang="ko">이미지를 축소하고 워터마크와 로고를 넣어주는 모듈입니다.	</description>
+	<description xml:lang="jp">イメ?ジを縮小してウォ?タ?マ?クとロゴを入れてくれるモジュ?ルです.	</description>
+	<description xml:lang="en">This is a module for storage of image files before resizing and printing watermark.</description>
+    <version>2.1.1.1</version>
+    <date>2016-06-15</date>
+	<category>accessory</category>
+	<author email_address="soonj@nate.com" link="http://www.wildgreen.co.kr">
+		<name xml:lang="ko">카르마</name>
+		<name xml:lang="jp">Karma</name>
+		<name xml:lang="en">Karma</name>
+	</author>
+</module>

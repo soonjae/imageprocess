@@ -1,0 +1,6 @@
+@CHARSET "UTF-8";
+#gd_info {border-collapse: collapse;margin-left: auto; margin-right: auto; text-align: left;}
+#gd_info caption {color:#ff0000;}
+#gd_info td { border: 1px solid #000000;  vertical-align: baseline;}
+#gd_info .e {background-color: #ccccff; font-weight: bold; color: #000000;}
+#gd_info .v {background-color: #cccccc; color: #000000;}
