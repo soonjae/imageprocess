@@ -37,8 +37,8 @@ class imageprocessAdminController extends imageprocess
 	}
 
 
-    function procImageprocessAdminWatermarkSetup() 
-	{
+    	function procImageprocessAdminWatermarkSetup() 
+   	{
 		$oModuleController = &getController('module');
 		$oModuleModel = &getModel('module');
 		$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
@@ -70,43 +70,43 @@ class imageprocessAdminController extends imageprocess
 		$mids = explode(';',$ipConfig->water_mid);
         if(count($mids))
         {
-            $watermark=array();
-            $xmargin = array();
-            $ymargin = array();
-            $water_position = array();
-            foreach($mids as $mid)
-            {
-				$watermark[$mid] =  trim(Context::get('watermark_'.$mid));
-                $xmargin[$mid] = Context::get('xmargin_'.$mid);
-                $ymargin[$mid] = Context::get('ymargin_'.$mid);
-                $water_position[$mid] = Context::get('water_position_'.$mid);
-            }
-			$ipConfig->each_watermark = $watermark;
-            $ipConfig->each_xmargin = $xmargin;
-            $ipConfig->each_ymargin = $ymargin;
-            $ipConfig->each_position = $water_position;
+            	$watermark=array();
+            	$xmargin = array();
+           	$ymargin = array();
+            	$water_position = array();
+            	foreach($mids as $mid)
+            	{
+			$watermark[$mid] =  trim(Context::get('watermark_'.$mid));
+                	$xmargin[$mid] = Context::get('xmargin_'.$mid);
+                	$ymargin[$mid] = Context::get('ymargin_'.$mid);
+                	$water_position[$mid] = Context::get('water_position_'.$mid);
+            	}
+		$ipConfig->each_watermark = $watermark;
+           	$ipConfig->each_xmargin = $xmargin;
+           	$ipConfig->each_ymargin = $ymargin;
+            	$ipConfig->each_position = $water_position;
         }
         else $ipConfig->each_watermark = NULL;
 
-		$oModuleController->insertModuleConfig('imageprocess', $ipConfig);
+	$oModuleController->insertModuleConfig('imageprocess', $ipConfig);
         return new Object(0,"success_updated");
     }
 
 
     function procImageprocessAdminOfileSetup() 
-	{
+    {
         $oModuleController = &getController('module');
         $oModuleModel = &getModel('module');
 
-		$ofolder = Context::get('store_path');
-		if($ofolder && !$this->checkfolder($ofolder)) return new Object(-1, 'checkfolder');
+	$ofolder = Context::get('store_path');
+	if($ofolder && !$this->checkfolder($ofolder)) return new Object(-1, 'checkfolder');
 
-		$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
+	$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
 
-		$ipConfig->store_path =$ofolder;
-		$ipConfig->original_store= Context::get('original_store');
-		$ipConfig->store_mid = str_replace('|@|',';',trim(Context::get('store_mid')));
-		$ipConfig->down_group = str_replace('|@|',';',trim(Context::get('down_group')));
+	$ipConfig->store_path =$ofolder;
+	$ipConfig->original_store= Context::get('original_store');
+	$ipConfig->store_mid = str_replace('|@|',';',trim(Context::get('store_mid')));
+	$ipConfig->down_group = str_replace('|@|',';',trim(Context::get('down_group')));
 
         $oModuleController->insertModuleConfig('imageprocess', $ipConfig);
 
@@ -114,51 +114,53 @@ class imageprocessAdminController extends imageprocess
     }
 
     function procImageprocessAdminEtcSetup() 
-	{
+    {
        	$oModuleController = &getController('module');
         $oModuleModel = &getModel('module');
        	$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
 
         $ipConfig->change_kfile= Context::get('change_kfile');
        	$ipConfig->magic_use = Context::get('magic_use');
-		$ipConfig->rotate_use = Context::get('rotate_use');
-		$ipConfig->magic_path = str_replace('\\','/',Context::get('magic_path'));
+	$ipConfig->rotate_use = Context::get('rotate_use');
+	$ipConfig->magic_path = str_replace('\\','/',Context::get('magic_path'));
+	$ipConfig->magic_conversion = Context::get('magic_conversion');
+	$ipConfig->magic_target = Context::get('magic_target');
+	if(ini_get('safe_mode') && $ipConfig->magic_use == 'Y') return new Object(-1, 'ip_safe_mode');
+	elseif($ipConfig->magic_use == 'Y' ) 
+	{
+		if($ipConfig->magic_path && !preg_match('/\/$/',$ipConfig->magic_path)) $ipConfig->magic_path .= '/';
+		$command =$ipConfig->magic_path."identify -version";
+		if (stripos(PHP_OS, 'WIN') === 0) 
+		{ 
+			$magic_path = str_replace('/','\\',$ipConfig->magic_path);
+			$command = "\"".$magic_path."convert\" -version";
+			$ver = shell_exec($command);
+		} 
+		else 	$ver = shell_exec($command);
+		if(!stripos($ver,'imagemagick')) return new Object(-1, 'check_magic_path');
 		$ipConfig->magic_conversion = Context::get('magic_conversion');
-		$ipConfig->magic_target = Context::get('magic_target');
-		if(ini_get('safe_mode') && $ipConfig->magic_use == 'Y') return new Object(-1, 'ip_safe_mode');
-		elseif($ipConfig->magic_use == 'Y' ) 
-		{
-			if($ipConfig->magic_path && !preg_match('/\/$/',$ipConfig->magic_path)) $ipConfig->magic_path .= '/';
-			$command =$ipConfig->magic_path."identify -version";
-			if (stripos(PHP_OS, 'WIN') === 0) 
-			{ 
-				$magic_path = str_replace('/','\\',$ipConfig->magic_path);
-				$command = "\"".$magic_path."convert\" -version";
-				$ver = shell_exec($command);
-			} 
-			else 	$ver = shell_exec($command);
-			if(!stripos($ver,'imagemagick')) return new Object(-1, 'check_magic_path');
-			$ipConfig->magic_conversion = Context::get('magic_conversion');
-			$ipConfig->original_format = Context::get('original_format');
-			$ipConfig->target_format = Context::get('target_format');
-			if(!$ipConfig->target_format) $ipConfig->target_format = 'jpg';
-		}
-
-		$oModuleController->insertModuleConfig('imageprocess', $ipConfig);
-
-		return new Object(0,"success_updated");
+		$ipConfig->original_format = Context::get('original_format');
+		$ipConfig->target_format = Context::get('target_format');
+		if(!$ipConfig->target_format) $ipConfig->target_format = 'jpg';
 	}
 
-	function checkfolder($dir) 
-	{
-		if(!is_dir($dir)) return false;
-		// permission 체크
+	$oModuleController->insertModuleConfig('imageprocess', $ipConfig);
+
+	return new Object(0,"success_updated");
+    }
+
+    function checkfolder($dir) 
+    {
+	if(!is_dir($dir)) return false;
+	
+	// permission 체크
         if(is_writable($dir)) return true;
         else return false;
-	}
+    }
 
-	function procImageprocessAdminTextlogo() {
-		$oModuleModel = &getModel('module');
+    function procImageprocessAdminTextlogo() 
+    {
+	$oModuleModel = &getModel('module');
         $oModuleController = &getController('module');
         $ipConfig = $oModuleModel->getModuleConfig('imageprocess');
 
@@ -176,7 +178,7 @@ class imageprocessAdminController extends imageprocess
         $ipConfig->logo_position = Context::get('logo_position');
         if(!$ipConfig->logo_position) $ipConfig->logo_position = 'south';
         $ipConfig->logo_mid = str_replace('|@|',';',trim(Context::get('logo_mid')));
-		$ipConfig->nologogroup = str_replace('|@|',';',trim(Context::get('nologogroup')));
+	$ipConfig->nologogroup = str_replace('|@|',';',trim(Context::get('nologogroup')));
 
         $ipConfig->logo_ext = str_replace('|@|',';',trim(Context::get('logo_ext')));
         $fg = Context::get('logo_fg');
