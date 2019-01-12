@@ -1,49 +1,49 @@
 <!--%import("./filter/watermark_setup.xml")-->
 <!--%import("./css/imageprocess.css")-->
 <!--%import("./js/imageprocess.js")-->
-
 <!--#include("./header.html")-->
 
 <form class="x_form-horizontal" action="./" method="get" onsubmit="return procFilter(this, watermark_setup);">
 <div class="x_control-group">
 
-			<label class="x_control-label" for="module_category_srl">{$lang->watermark_use}</label>
-			<div class="x_controls">
-			<label class="x_inline"><input type="radio" id="watermark_use_N" name="watermark_use" value="N" <!--@if($imageprocess_info->watermark_use!='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
-            <label class="x_inline"><input type="radio" id="watermark_use_Y" name="watermark_use" value="Y" <!--@if($imageprocess_info->watermark_use == 'Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
-            <br /> {$lang->about_watermark_use}
-		</div>
-    </div>
-<div class="x_control-group">
-			<label class="x_control-label" for="module_category_srl">{$lang->msg_watermark_type}</label>
-			<div class="x_controls">
-		<!--@foreach($lang->ext_type as $val)-->
-			<label class="x_inline"><input type="checkbox" value="{$val}" name="ext" <!--@if(in_array($val,$imageprocess_info->ext))-->checked="checked"<!--@end--> /> .{$val}</label>
-		<!--@end--> {$lang->abount_target_watermark}
-		</div>
-	</div>
-<div class="x_control-group">
-			<label class="x_control-label" for="module_category_srl">{$lang->water_quality}</label>
-			<div class="x_controls">
-        <input type="text" name="water_quality" value="{$imageprocess_info->water_quality}" class="inputTypeText w40" ><br /> {$lang->msg_water_quality}
-    </div>
+<label class="x_control-label" for="module_category_srl">{$lang->watermark_use}</label>
+<div class="x_controls">
+<label class="x_inline"><input type="radio" id="watermark_use_N" name="watermark_use" value="N" <!--@if($imageprocess_info->watermark_use!='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
+<label class="x_inline"><input type="radio" id="watermark_use_Y" name="watermark_use" value="Y" <!--@if($imageprocess_info->watermark_use == 'Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
+<br /> {$lang->about_watermark_use}
+</div>
 </div>
 <div class="x_control-group">
-			<label class="x_control-label" for="module_category_srl">{$lang->watermark}</label>
-			<div class="x_controls">
-			<!--@foreach($stampList as $fn=>$stamp)-->
+	<label class="x_control-label" for="module_category_srl">{$lang->msg_watermark_type}</label>
+	<div class="x_controls">
+	<!--@foreach($lang->ext_type as $val)-->
+		<label class="x_inline"><input type="checkbox" value="{$val}" name="ext" <!--@if(in_array($val,$imageprocess_info->ext))-->checked="checked"<!--@end--> /> .{$val}</label>
+	<!--@end-->
+	{$lang->abount_target_watermark}
+	</div>
+</div>
+<div class="x_control-group">
+	<label class="x_control-label" for="module_category_srl">{$lang->water_quality}</label>
+	<div class="x_controls">
+        <input type="text" name="water_quality" value="{$imageprocess_info->water_quality}" class="inputTypeText w40" ><br /> {$lang->msg_water_quality}
+    	</div>
+</div>
+<div class="x_control-group">
+	<label class="x_control-label" for="module_category_srl">{$lang->watermark}</label>
+	<div class="x_controls">
+	<!--@foreach($stampList as $fn=>$stamp)-->
             <label class="x_inline"><input type="radio" value="{$stamp}" name="watermark" <!--@if($stamp == $imageprocess_info->watermark)--> checked="checked"<!--@end--> /> <br /><img src="{$stamp}"><br />{$fn}</label>
         <!--@end-->
-			<br />{$lang->msg_watermark}
+	<br />{$lang->msg_watermark}
 </div></div>
 <div class="x_control-group">
-            <label class="x_control-label" for="module_category_srl">{$lang->water_margin}</label>
-            <div class="x_controls">
-		<label class="x_inline">{$lang->xmargin}
-		<input type="text" name="xmargin" value="{$imageprocess_info->xmargin}" class="inputTypeText w40" ></label>
-		<label class="x_inline">{$lang->ymargin}
+        <label class="x_control-label" for="module_category_srl">{$lang->water_margin}</label>
+        <div class="x_controls">
+	<label class="x_inline">{$lang->xmargin}
+	<input type="text" name="xmargin" value="{$imageprocess_info->xmargin}" class="inputTypeText w40" ></label>
+	<label class="x_inline">{$lang->ymargin}
         <input type="text" name="ymargin" value="{$imageprocess_info->ymargin}" class="inputTypeText w40" ></label>
-		<br />{$lang->msg_water_margin}
+	<br />{$lang->msg_water_margin}
     </div>
 </div>
 <div class="x_control-group">
