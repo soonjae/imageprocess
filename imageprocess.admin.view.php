@@ -18,7 +18,6 @@ class imageprocessAdminView extends imageprocess
 		$this->imageprocess_info=$oModuleModel->getModuleConfig('imageprocess');
 		$oMemberModel = &getModel('member');
 		$this->group_list = $oMemberModel->getGroups();
-
 	}
 
 	/**
@@ -26,7 +25,6 @@ class imageprocessAdminView extends imageprocess
 	**/
 	function dispImageprocessAdminIndex() 
 	{
-
 		$oModuleModel = &getModel('module');
 		$oImageprocessModel = &getModel('imageprocess');
 
@@ -121,7 +119,7 @@ class imageprocessAdminView extends imageprocess
     * @brief 워터마크 관리 페이지 보여줌
     **/
     function dispImageprocessAdminOfile() 
-	{
+    {
         $oModuleModel = &getModel('module');
 	$imageprocess_info=$this->imageprocess_info;
 
