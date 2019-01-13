@@ -92,7 +92,7 @@
             <label class="x_control-label" for="module_category_srl">{$lang->each_watermark}</label>
             <div class="x_controls">
             <!--@foreach($stampList as $fn=>$stamp)-->
-            <label class="x_inline"><input type="radio" value="{$stamp}" name="watermark_{$key}" <!--@if($stamp == $each_watermark[$key])--> checked="checked"<!--@end--> /> <br /><img src="{$stamp}"><br />{$fn}</label>
+            <label class="x_inline"><input type="radio" value="{$stamp}" name="watermark_{$key}" <!--@if($stamp == $imageprocess_info->each_watermark[$key])--> checked="checked"<!--@end--> /> <br /><img src="{$stamp}"><br />{$fn}</label>
         <!--@end-->
             <br />{$lang->msg_watermark}
 </div></div>
