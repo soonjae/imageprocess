@@ -25,38 +25,14 @@ class imageprocessAdminView extends imageprocess
 	**/
 	function dispImageprocessAdminIndex() 
 	{
-		$oModuleModel = &getModel('module');
-		$oImageprocessModel = &getModel('imageprocess');
-
 		$imageprocess_info=$this->imageprocess_info;
 		$target_mid=explode(";",$imageprocess_info->target_mid);
 		$imageprocess_info->target_mid=$target_mid;
 		$imageprocess_info->noresizegroup=explode(";",$imageprocess_info->noresizegroup);
 		Context::set("imageprocess_info",$imageprocess_info);
 
-		// mid 목록을 가져옴
-		$oModuleModel = &getModel('module');
-                $mid_list = $oModuleModel->getMidList($args);
-
-		// module_category와 module의 조합
-		if(!$site_module_info->site_srl) 
-		{
-			// 모듈 카테고리 목록을 구함
-			$module_categories = $oModuleModel->getModuleCategories();
-
-			if($mid_list) 
-			{
-				foreach($mid_list as $module_srl => $module) 
-				{
-					$module_categories[$module->module_category_srl]->list[$module_srl] = $module;
-				}
-			}
-		} 
-		else 
-		{
-			$module_categories[0]->list = $mid_list;
-		}
-
+		$oImageprocessModel = &getModel('imageprocess');
+		$module_categories = $oImageprocessModel->getModuleCategoriesMid($args);
 		Context::set('mid_list',$module_categories);
 		Context::set('group_list', $this->group_list);
 
@@ -69,8 +45,6 @@ class imageprocessAdminView extends imageprocess
      **/
     function dispImageprocessAdminWatermark() 
     {
-
-        $oModuleModel = &getModel('module');
         $imageprocess_info=$this->imageprocess_info;
 
         $water_mid=explode(";",$imageprocess_info->water_mid);
@@ -79,27 +53,8 @@ class imageprocessAdminView extends imageprocess
 	$imageprocess_info->nowatergroup=explode(";",$imageprocess_info->nowatergroup);
         Context::set("imageprocess_info",$imageprocess_info);
 
-        // mid 목록을 가져옴
-        $mid_list = $oModuleModel->getMidList($args);
-
-        // module_category와 module의 조합
-        if(!$site_module_info->site_srl) 
-	{
-            // 모듈 카테고리 목록을 구함
-            $module_categories = $oModuleModel->getModuleCategories();
-
-            if($mid_list) 
-	    {
-                foreach($mid_list as $module_srl => $module) 
-		{
-                    $module_categories[$module->module_category_srl]->list[$module_srl] = $module;
-                }
-            }
-        } 
-	else 
-	{
-            $module_categories[0]->list = $mid_list;
-        }
+        $oImageprocessModel = &getModel('imageprocess');
+	$module_categories = $oImageprocessModel->getModuleCategoriesMid($args);
 	
 	$stampList = $this->getStampList();	
 	Context::set('stampList',$stampList);
@@ -115,7 +70,6 @@ class imageprocessAdminView extends imageprocess
     **/
     function dispImageprocessAdminOfile() 
     {
-        $oModuleModel = &getModel('module');
 	$imageprocess_info=$this->imageprocess_info;
 
         $store_mid=explode(";",$imageprocess_info->store_mid);
@@ -127,27 +81,8 @@ class imageprocessAdminView extends imageprocess
         //$group_list = $oMemberModel->getGroups();
         Context::set('group_list', $this->group_list);
 
-        // mid 목록을 가져옴
-        $mid_list = $oModuleModel->getMidList($args);
-
-        // module_category와 module의 조합
-        if(!$site_module_info->site_srl) 
-	{
-            // 모듈 카테고리 목록을 구함
-            $module_categories = $oModuleModel->getModuleCategories();
-
-            if($mid_list) 
-		{
-                foreach($mid_list as $module_srl => $module) 
-		{
-                    $module_categories[$module->module_category_srl]->list[$module_srl] = $module;
-                }
-            }
-        } 
-	else 
-	{
-            $module_categories[0]->list = $mid_list;
-        }
+        $oImageprocessModel = &getModel('imageprocess');
+	$module_categories = $oImageprocessModel->getModuleCategoriesMid($args);
 
         Context::set('mid_list',$module_categories);
 
@@ -215,7 +150,6 @@ class imageprocessAdminView extends imageprocess
 
     function dispImageprocessAdminTextlogo() 
     {
-	$oModuleModel = &getModel('module');
 	$imageprocess_info=$this->imageprocess_info;
 	
 	$logo_mid=explode(";",$imageprocess_info->logo_mid);
@@ -229,23 +163,8 @@ class imageprocessAdminView extends imageprocess
 	Context::set('fg',unserialize($imageprocess_info->each_fg));
 	Context::set('bg',unserialize($imageprocess_info->each_bg));
 	Context::set('position',unserialize($imageprocess_info->each_position));
-        $mid_list = $oModuleModel->getMidList($args);
-	if(!$site_module_info->site_srl) 
-	{
-		$module_categories = $oModuleModel->getModuleCategories();
-
-		if($mid_list) 
-		{
-			foreach($mid_list as $module_srl => $module) 
-			{
-				$module_categories[$module->module_category_srl]->list[$module_srl] = $module;
-			}
-   		}
-	} 
-	else 
-	{
-		$module_categories[0]->list = $mid_list;
-	}
+        $oImageprocessModel = &getModel('imageprocess');
+	$module_categories = $oImageprocessModel->getModuleCategoriesMid($args);
 	Context::set('mid_list',$module_categories);
 	Context::set('group_list', $this->group_list);
 
