@@ -100,4 +100,5 @@ $lang->msg_original_store = 'This is for storing original files before processin
 $lang->msg_watermark = "'./modules/imageprocess/stamp/stamp.png' will be default.";
 $lang->msg_rotate_use ='Image automatially rotate upright position during upload mobile images.';
 $lang->rotate_use ='AutoRotation of mobile images';
+$lang->msg_logo_point = 'Please enter the size of the letter to be used for the logo.';
 ?>
