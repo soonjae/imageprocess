@@ -36,7 +36,6 @@ class imageprocessAdminView extends imageprocess
 
 		// mid 목록을 가져옴
 		$oModuleModel = &getModel('module');
-		$oModuleAdminModel = &getAdminModel('module');
                 $mid_list = $oModuleModel->getMidList($args);
 
 		// module_category와 module의 조합
@@ -78,10 +77,6 @@ class imageprocessAdminView extends imageprocess
         $imageprocess_info->water_mid=$water_mid;
 	$imageprocess_info->ext = explode(";",$imageprocess_info->ext);
 	$imageprocess_info->nowatergroup=explode(";",$imageprocess_info->nowatergroup);
-	Context::set("each_watermark",$imageprocess_info->each_watermark);
-	Context::set("xmargin",$imageprocess_info->xmargin);
-	Context::set("ymargin",$imageprocess_info->ymargin);
-	Context::set("each_position",$imageprocess_info->each_position);
         Context::set("imageprocess_info",$imageprocess_info);
 
         // mid 목록을 가져옴
