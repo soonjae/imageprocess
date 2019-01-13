@@ -48,17 +48,17 @@ class imageprocessController extends imageprocess {
 		$ext = strtolower(substr(strrchr($args->source_filename,'.'),1));
 
 		//Image Rotate
-		if($file && $ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) ){
-			$exif = exif_read_data($file);
-	        if($exif['Orientation'] == '6' || $exif['Orientation'] == '3' || $exif['Orientation'] == '8') 
-			{
-				if($ipConfig->magic_use == 'Y') $oImageprocessModel->MagicRotate($file, $ipConfig->magic_path);
-                else $oImageprocessModel->GDrotate($file,$ext);
-			}
-		}
+		if($file && $ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|png)$/i', $file) )
+                {
+                        if($oImageprocessModel->checkRotated($file))
+                        {
+                                if($ipConfig->magic_use == 'Y') $oImageprocessModel->MagicRotate($file, $ipConfig->magic_path);
+                                else $oImageprocessModel->GDrotate($file,$ext);
+                        }
+                }
 		//Image Rotate end
 
-		//여기부터 magic_conversion
+		//magic_conversion
 		$or_format = explode('|@|',$ipConfig->original_format);
 		if(in_array('tiff',$or_format)) {
 			$o_format = array_merge($or_format,array('tif')); //tiff와 tif를 동시에...
@@ -90,7 +90,7 @@ class imageprocessController extends imageprocess {
 			}
 		} 
 		
-		//여기부터 리사이즈
+		//Image Resize
 		list($width, $height,$type)=getimagesize($file);
 		if($ipConfig->resize_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) &&  (!$ipConfig->target_mid || in_array($file_mid,$target_mid))) 
 		{	
@@ -135,7 +135,7 @@ class imageprocessController extends imageprocess {
 			} 
 		}
 
-		//여기부터 워터마크
+		//Image Watermakr
 		if($ipConfig->watermark_use == 'Y' && preg_match($ext_type, $file) &&  (!$ipConfig->water_mid ||in_array($file_mid,$water_mid))) 
 		{	
 			list($width, $height,$type)=getimagesize($file);
@@ -150,7 +150,7 @@ class imageprocessController extends imageprocess {
 			else $oImageprocessModel->alphaWatermark($file,$ipConfig);
 		}
 
-        	//여기부터 텍스트로고
+        	//Text Logo
         	$logo_mid=explode(";",$ipConfig->logo_mid);
 		if(!$ipConfig->logo_ext) $ipConfig->logo_ext="jpg";
         	$logo_ext_type ="/\.(".implode("|",explode(";",$ipConfig->logo_ext)).")$/i";
@@ -188,7 +188,7 @@ class imageprocessController extends imageprocess {
 			$output = executeQuery('imageprocess.updateFileSize', $obj);
 		}
 		return;
-	} //functiontriggerImsert
+	} // End of functiontriggerInsert
 
 
 	function triggerDeleteFile(&$args) 
