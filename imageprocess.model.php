@@ -990,10 +990,10 @@ class imageprocessModel extends imageprocess
         else return false;
     }
 
-        function getModuleCategoriesMid()
+        function getModuleCategoriesMid($args)
         {
                 $oModuleModel = &getModel('module');
-                $mid_list = $oModuleModel->getMidList();
+                $mid_list = $oModuleModel->getMidList($args);
                 $site_module_info = Context::get('site_module_info');
                 if(!$site_module_info->site_srl)
                 {
