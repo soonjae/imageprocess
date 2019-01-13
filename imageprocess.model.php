@@ -991,7 +991,15 @@ class imageprocessModel extends imageprocess
             base_convert(substr($rgb, 4, 2), 16, 10),
         );
     }
-
+	
+    function checkRotated($file)
+    {
+        if(!file_exists($file)) return false;
+        if(!extension_loaded('exif'))   return false;
+        $exif = exif_read_data($file);
+        if($exif['Orientation'] == '6' || $exif['Orientation'] == '3' || $exif['Orientation'] == '8') return $exif['Orientation'];
+        else return false;
+    }
 
 }
 /* End of file imageprocess.model.php */
