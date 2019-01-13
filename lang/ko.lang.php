@@ -103,7 +103,7 @@ $lang->logo_style_type = array(
 );
 $lang->about_font_style = '단순텍스트를 사용하는 경우 사진의 배경이 글자색과 비슷한 곳에서>는 글자가 보이지 않습니다. 단순텍스트 스타일은 특별한 경우에만 이용하시기 바랍니다. 기본은 새도우입니다.';
 $lang->logo_font_type = '사용할 폰트';
-$lang->about_font ='폰트를 선택하십시요. 폰트에 관한 자세한 설명은 <a href="http://heiswed.tistory.com/entry/Commercial-Free-Fonts" target="_blank">http://heiswed.tistory.com/entry/Commercial-Free-Fonts</a>를 참조하시기 바랍니다. ';
+$lang->about_font ='폰트를 선택하십시요. 폰트에 관한 자세한 설명은 <a href="https://iropke.com/archive/freefont.html" target="_blank">http://heiswed.tistory.com/entry/Commercial-Free-Fonts</a>를 참조하시기 바랍니다. ';
 $lang->about_one_font = '폰트를 선택하십시요. <br />배포화일에는 화일사이즈의 문제로 기본적
 으로 한개의 폰트만 내장되어 있습니다. 폰트의 추가는 http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip 에서 화일을 다운로드받아서 ./modules/imageprocess/font 폴더에 복사해넣으시면 됩니다';
 
