@@ -575,14 +575,7 @@ class imageprocessModel extends imageprocess
 		return false;
 	}
 
-	/**
-	 * @brief DB에 생성된 mid 전체 목록을 구해옴
-	 **/
-	function getMidList($args = null) 
-	{
-		$oModuleModel = getModel('module');
-                return $oModuleModel->getMidList($args);
-	}
+	/* function getMidList() 삭제 */
 	
 	function moveFile($out,$real) 
 	{
