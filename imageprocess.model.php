@@ -396,7 +396,6 @@ class imageprocessModel extends imageprocess
         if(!empty($exif['Orientation'])) 
 		{
 			$args[] = "-auto-orient";
-//			$args[] = " -strip";
 			$args[] = $fn;
             $args[] = $out;
 			$out = $this->_imagemagick_convert_exec($args, $work_path, $command);
@@ -530,7 +529,6 @@ class imageprocessModel extends imageprocess
         $each_ymargin = $ipConfig->each_ymargin;
         $each_position = $ipConfig->each_position;
         $t_mid = $module_info->module_srl;
-//
 
 		if($each_position[$t_mid]) $water_position = $each_position[$t_mid];
         else $water_position = $ipConfig->water_position;
@@ -545,7 +543,6 @@ class imageprocessModel extends imageprocess
 
         if($each_ymargin[$t_mid]) $ymargin = $each_ymargin[$t_mid];
         else $ymargin = $ipConfig->ymargin;
-// 추가끝 //
 		$command= $ipConfig->magic_path.'composite'; 
 		$args[] = '-quality '.$ipConfig->water_quality;
 		$args[] = '-gravity '.$this->getGeo($water_position, $xmargin, $ymargin );
@@ -758,7 +755,6 @@ class imageprocessModel extends imageprocess
         $position = $config->logo_position;
         $point = $config->logo_point;
         $quality = $config->logo_quality;
-//      $color = $config->logo_fg;
         if(!$quality) $quality = 100;
 
         $source_file = FileHandler::getRealPath($source_file);
@@ -878,7 +874,7 @@ class imageprocessModel extends imageprocess
         $fg =  imagecolorallocate($im, $fgrgb[0], $fgrgb[1], $fgrgb[2]);
         imagefttext($im, $point, 0, $locax, $locay, $fg, $font, $textlogo);
 
-    // write into the file
+    	// write into the file
         switch($type)
         {
             case 'gif' :
