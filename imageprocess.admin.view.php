@@ -39,8 +39,7 @@ class imageprocessAdminView extends imageprocess
 		// mid 목록을 가져옴
 		$oModuleModel = &getModel('module');
 		$oModuleAdminModel = &getAdminModel('module');
-
-		$mid_list = $oImageprocessModel->getMidList($args);
+                $mid_list = $oModuleModel->getMidList($args);
 
 		// module_category와 module의 조합
 		if(!$site_module_info->site_srl) 
@@ -88,8 +87,7 @@ class imageprocessAdminView extends imageprocess
         Context::set("imageprocess_info",$imageprocess_info);
 
         // mid 목록을 가져옴
-	$oImageprocessModel = &getModel('imageprocess');
-	$mid_list = $oImageprocessModel->getMidList($args);
+        $mid_list = $oModuleModel->getMidList($args);
 
         // module_category와 module의 조합
         if(!$site_module_info->site_srl) 
@@ -137,8 +135,7 @@ class imageprocessAdminView extends imageprocess
         Context::set('group_list', $this->group_list);
 
         // mid 목록을 가져옴
-	$oImageprocessModel = &getModel('imageprocess');
-	$mid_list = $oImageprocessModel->getMidList($args);
+        $mid_list = $oModuleModel->getMidList($args);
 
         // module_category와 module의 조합
         if(!$site_module_info->site_srl) 
@@ -239,9 +236,7 @@ class imageprocessAdminView extends imageprocess
 	Context::set('fg',unserialize($imageprocess_info->each_fg));
 	Context::set('bg',unserialize($imageprocess_info->each_bg));
 	Context::set('position',unserialize($imageprocess_info->each_position));
-	$oImageprocessModel = &getModel('imageprocess');
-	$mid_list = $oImageprocessModel->getMidList($args);
-
+        $mid_list = $oModuleModel->getMidList($args);
 	if(!$site_module_info->site_srl) 
 	{
 		$module_categories = $oModuleModel->getModuleCategories();
