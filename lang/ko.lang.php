@@ -103,7 +103,7 @@ $lang->logo_style_type = array(
 );
 $lang->about_font_style = '단순텍스트를 사용하는 경우 사진의 배경이 글자색과 비슷한 곳에서>는 글자가 보이지 않습니다. 단순텍스트 스타일은 특별한 경우에만 이용하시기 바랍니다. 기본은 새도우입니다.';
 $lang->logo_font_type = '사용할 폰트';
-$lang->about_font ='폰트를 선택하십시요. 폰트에 관한 자세한 설명은 <a href="https://iropke.com/archive/freefont.html" target="_blank">http://heiswed.tistory.com/entry/Commercial-Free-Fonts</a>를 참조하시기 바랍니다. ';
+$lang->about_font ='폰트를 선택하십시요. 폰트에 관한 자세한 설명은 <a href="https://iropke.com/archive/freefont.html" target="_blank">https://iropke.com/archive/freefont.html</a>를 참조하시기 바랍니다. ';
 $lang->about_one_font = '폰트를 선택하십시요. <br />배포화일에는 화일사이즈의 문제로 기본적
 으로 한개의 폰트만 내장되어 있습니다. 폰트의 추가는 http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip 에서 화일을 다운로드받아서 ./modules/imageprocess/font 폴더에 복사해넣으시면 됩니다';
 
@@ -121,7 +121,7 @@ $lang->cmd_logo_fg = '글자색';
 $lang->cmd_logo_bg = '글자배경색';
 $lang->msg_logo_fg = '* 새겨넣을 글자의 색상을 선택하십시요.';
 $lang->msg_logo_bg = '* 글자의 배경색을 선택하십시요.';
-$lang->install_font = '폰트가 설치되어있지 않습니다.<br /><a href="http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip">http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip</a><br /><a href="http://kldp.net/frs/download.php/4695/un-fonts-core-1.0.2-080608.tar.gz">http://kldp.net/frs/download.php/4695/un-fonts-core-1.0.2-080608.tar.gz</a>i<br /><a href="http://kldp.net/projects/baekmuk/download/1429?filename=baekmuk-ttf-2.2.tar.gz">http://kldp.net/projects/baekmuk/download/1429?filename=baekmuk-ttf-2.2.tar.gz</a><br />등에서 폰트를 다운받으신후 ./modules/imageprocess/font 폴더에 복사해 넣으시면 됩니다.<br/><br />기타의 폰트는 서버에 따라 정상적인 작동을 하지않을 수 있습니다. <br />폰트에 관한 자세한 내용은 <a href="http://heiswed.tistory.com/entry/Commercial-Free-Fonts" target="_blank">http://heiswed.tistory.com/entry/Commercial-Free-Fonts</a>를 참조하시기 바랍니다.';
+$lang->install_font = '폰트가 설치되어있지 않습니다.<br /><a href="http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip">http://cdn.naver.com/naver/NanumFont/fontfiles/NanumFont_TTF_ALL.zip</a><br /><a href="http://kldp.net/frs/download.php/4695/un-fonts-core-1.0.2-080608.tar.gz">http://kldp.net/frs/download.php/4695/un-fonts-core-1.0.2-080608.tar.gz</a>i<br /><a href="http://kldp.net/projects/baekmuk/download/1429?filename=baekmuk-ttf-2.2.tar.gz">http://kldp.net/projects/baekmuk/download/1429?filename=baekmuk-ttf-2.2.tar.gz</a><br />등에서 폰트를 다운받으신후 ./modules/imageprocess/font 폴더에 복사해 넣으시면 됩니다.<br/><br />기타의 폰트는 서버에 따라 정상적인 작동을 하지않을 수 있습니다. <br />폰트에 관한 자세한 내용은 <a href="https://iropke.com/archive/freefont.htmls" target="_blank">https://iropke.com/archive/freefont.html</a>를 참조하시기 바랍니다.';
 $exfont = '폰트';
 $lang->msg_logo_color = '한가지 색상만 사용하는 경우 사진의 색상과 겹치는부분은 글자가 잘 >보이지않게 됩니다. 따라서 콘트라스트가 보색계통의 색상을 배경색으로 지쟁해서 사용하시는 것>이 좋습니다.';
 $lang->msg_logo_point = '로고에 사용할 글자의 크기를 입력하십시요.';
