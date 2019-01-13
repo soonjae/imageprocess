@@ -990,6 +990,29 @@ class imageprocessModel extends imageprocess
         else return false;
     }
 
+        function getModuleCategoriesMid()
+        {
+                $oModuleModel = &getModel('module');
+                $mid_list = $oModuleModel->getMidList();
+                $site_module_info = Context::get('site_module_info');
+                if(!$site_module_info->site_srl)
+                {
+                        $module_categories = $oModuleModel->getModuleCategories();
+                        if($mid_list)
+                        {
+                                foreach($mid_list as $module_srl => $module)
+                                {
+                                        $module_categories[$module->module_category_srl]->list[$module_srl] = $module;
+                                }
+                        }
+                }
+                else
+                {
+                        $module_categories[0]->list = $mid_list;
+                }
+                return $module_categories;
+        }
+
 }
 /* End of file imageprocess.model.php */
 /* Location: ./modules/imageprocess/imageprocess.model.php */
