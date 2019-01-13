@@ -6,8 +6,8 @@
 	<description xml:lang="ko">이미지를 축소하고 워터마크와 로고를 넣어주는 모듈입니다.	</description>
 	<description xml:lang="jp">イメ?ジを縮小してウォ?タ?マ?クとロゴを入れてくれるモジュ?ルです.	</description>
 	<description xml:lang="en">This is a module for storage of image files before resizing and printing watermark.</description>
-    <version>2.1.1.1</version>
-    <date>2016-06-15</date>
+    <version>2.2</version>
+    <date>2019-01-15</date>
 	<category>accessory</category>
 	<author email_address="soonj@nate.com" link="http://www.wildgreen.co.kr">
 		<name xml:lang="ko">카르마</name>
