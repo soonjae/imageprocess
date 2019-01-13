@@ -102,4 +102,5 @@ $lang->msg_original_store = '写真を操作する前の原本写真を保存し
 $lang->msg_watermark = 'ファイルを指定しなければ ./modules/imageprocess/stamp/stamp.pngに設定されます.';
 $lang->msg_rotate_use ='Image automatially rotate upright position during upload mobile images.';
 $lang->rotate_use ='AutoRotation of mobile images';
+$lang->msg_logo_point = 'ロゴの使用文字のサイズを入力してください.';
 ?>
