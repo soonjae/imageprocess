@@ -396,6 +396,7 @@ class imageprocessModel extends imageprocess
         if(!empty($exif['Orientation'])) 
 		{
 			$args[] = "-auto-orient";
+//			$args[] = " -strip";
 			$args[] = $fn;
             $args[] = $out;
 			$out = $this->_imagemagick_convert_exec($args, $work_path, $command);
@@ -529,6 +530,7 @@ class imageprocessModel extends imageprocess
         $each_ymargin = $ipConfig->each_ymargin;
         $each_position = $ipConfig->each_position;
         $t_mid = $module_info->module_srl;
+//
 
 		if($each_position[$t_mid]) $water_position = $each_position[$t_mid];
         else $water_position = $ipConfig->water_position;
@@ -543,6 +545,7 @@ class imageprocessModel extends imageprocess
 
         if($each_ymargin[$t_mid]) $ymargin = $each_ymargin[$t_mid];
         else $ymargin = $ipConfig->ymargin;
+// 추가끝 //
 		$command= $ipConfig->magic_path.'composite'; 
 		$args[] = '-quality '.$ipConfig->water_quality;
 		$args[] = '-gravity '.$this->getGeo($water_position, $xmargin, $ymargin );
@@ -572,7 +575,25 @@ class imageprocessModel extends imageprocess
 		return false;
 	}
 
-	/* function getMidList() 삭제 */
+	/**
+	 * @brief DB에 생성된 mid 전체 목록을 구해옴
+	 **/
+	function getMidList($args = null) 
+	{
+		$output = executeQuery('imageprocess.getMidList', $args);
+		if(!$output->toBool()) return $output;
+
+		$list = $output->data;
+		if(!$list) return;
+
+		if(!is_array($list)) $list = array($list);
+
+		foreach($list as $val) 
+		{
+			$mid_list[$val->module_srl] = $val;
+		}
+		return $mid_list;
+	}
 	
 	function moveFile($out,$real) 
 	{
@@ -755,6 +776,7 @@ class imageprocessModel extends imageprocess
         $position = $config->logo_position;
         $point = $config->logo_point;
         $quality = $config->logo_quality;
+//      $color = $config->logo_fg;
         if(!$quality) $quality = 100;
 
         $source_file = FileHandler::getRealPath($source_file);
@@ -874,7 +896,7 @@ class imageprocessModel extends imageprocess
         $fg =  imagecolorallocate($im, $fgrgb[0], $fgrgb[1], $fgrgb[2]);
         imagefttext($im, $point, 0, $locax, $locay, $fg, $font, $textlogo);
 
-    	// write into the file
+    // write into the file
         switch($type)
         {
             case 'gif' :
@@ -980,38 +1002,7 @@ class imageprocessModel extends imageprocess
             base_convert(substr($rgb, 4, 2), 16, 10),
         );
     }
-	
-    function checkRotated($file)
-    {
-        if(!file_exists($file)) return false;
-        if(!extension_loaded('exif'))   return false;
-        $exif = exif_read_data($file);
-        if($exif['Orientation'] == '6' || $exif['Orientation'] == '3' || $exif['Orientation'] == '8') return $exif['Orientation'];
-        else return false;
-    }
 
-        function getModuleCategoriesMid($args)
-        {
-                $oModuleModel = &getModel('module');
-                $mid_list = $oModuleModel->getMidList($args);
-                $site_module_info = Context::get('site_module_info');
-                if(!$site_module_info->site_srl)
-                {
-                        $module_categories = $oModuleModel->getModuleCategories();
-                        if($mid_list)
-                        {
-                                foreach($mid_list as $module_srl => $module)
-                                {
-                                        $module_categories[$module->module_category_srl]->list[$module_srl] = $module;
-                                }
-                        }
-                }
-                else
-                {
-                        $module_categories[0]->list = $mid_list;
-                }
-                return $module_categories;
-        }
 
 }
 /* End of file imageprocess.model.php */

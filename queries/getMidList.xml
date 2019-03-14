@@ -1,0 +1,12 @@
+<query id="getMidList" action="select">
+    <tables>
+        <table name="modules" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+    <conditions />
+    <navigation>
+        <index var="sort_index" default="browser_title" order="asc" />
+    </navigation>
+</query>

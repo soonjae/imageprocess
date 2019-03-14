@@ -27,10 +27,10 @@ class imageprocess extends ModuleObject
 		$module_info = $oModuleModel->getModuleInfoXml('imageprocess');
 		if(!$ipConfig->version || ($ipConfig->version != $module_info->version)) return true;
 		if(!$oModuleModel->getTrigger('file.insertFile', 'imageprocess', 'controller', 'triggerInsertFile', 'after')) return true;
-        	if(!$oModuleModel->getTrigger('file.downloadFile', 'imageprocess', 'controller', 'triggerDownloadFile', 'before')) return true;
-        	if(!$oModuleModel->getTrigger('file.deleteFile', 'imageprocess', 'controller', 'triggerDeleteFile', 'after')) return true;
-        	if(!$oModuleModel->getTrigger('comment.deleteComment', 'imageprocess', 'controller', 'triggerDeleteComment', 'before')) return true;
-        	if(!$oModuleModel->getTrigger('document.deleteDocument', 'imageprocess', 'controller', 'triggerDeleteDocument', 'before')) return true;
+        if(!$oModuleModel->getTrigger('file.downloadFile', 'imageprocess', 'controller', 'triggerDownloadFile', 'before')) return true;
+        if(!$oModuleModel->getTrigger('file.deleteFile', 'imageprocess', 'controller', 'triggerDeleteFile', 'after')) return true;
+        if(!$oModuleModel->getTrigger('comment.deleteComment', 'imageprocess', 'controller', 'triggerDeleteComment', 'before')) return true;
+        if(!$oModuleModel->getTrigger('document.deleteDocument', 'imageprocess', 'controller', 'triggerDeleteDocument', 'before')) return true;
 		if(!$oModuleModel->getTrigger('document.moveDocumentModule','imageprocess', 'controller', 'triggerMoveDocument', 'before')) return true;
 		if (!extension_loaded('exif') && $ipConfig->rotate_use == 'Y') return true; 
 		return false;
@@ -62,9 +62,9 @@ class imageprocess extends ModuleObject
 		} 
 		elseif($oldconfig && $oldconfig->version < '0.9.0' ) 
 		{
-            		$ipConfig = $oldconfig;
-            		$ipConfig->water_quality = '100';
-        	}
+            $ipConfig = $oldconfig;
+            $ipConfig->water_quality = '100';
+        }
 		elseif($oldconfig) 
 		{
 			$ipConfig = $oldconfig;
@@ -93,7 +93,7 @@ class imageprocess extends ModuleObject
 		}
 
 		if (!extension_loaded('exif') && $oldconfig->rotate_use == 'Y')
-             	$ipConfig->rotate_use = 'N';
+             $ipConfig->rotate_use = 'N';
 
 		$ipConfig->version = $module_info->version;
 		$oModuleController->insertModuleConfig('imageprocess', $ipConfig);
@@ -101,17 +101,17 @@ class imageprocess extends ModuleObject
 		if(!$oModuleModel->getTrigger('file.insertFile', 'imageprocess', 'controller', 'triggerInsertFile', 'after'))
 		$oModuleController->insertTrigger('file.insertFile', 'imageprocess', 'controller', 'triggerInsertFile', 'after');
 
-		if(!$oModuleModel->getTrigger('file.downloadFile', 'imageprocess', 'controller', 'triggerDownloadFile', 'before'))
-       	 	$oModuleController->insertTrigger('file.downloadFile', 'imageprocess', 'controller', 'triggerDownloadFile', 'before');
+        if(!$oModuleModel->getTrigger('file.downloadFile', 'imageprocess', 'controller', 'triggerDownloadFile', 'before'))
+        $oModuleController->insertTrigger('file.downloadFile', 'imageprocess', 'controller', 'triggerDownloadFile', 'before');
 
-        	if(!$oModuleModel->getTrigger('file.deleteFile', 'imageprocess', 'controller', 'triggerDeleteFile', 'after'))
-       	 	$oModuleController->insertTrigger('file.deleteFile', 'imageprocess', 'controller', 'triggerDeleteFile', 'after');
+        if(!$oModuleModel->getTrigger('file.deleteFile', 'imageprocess', 'controller', 'triggerDeleteFile', 'after'))
+        $oModuleController->insertTrigger('file.deleteFile', 'imageprocess', 'controller', 'triggerDeleteFile', 'after');
 
 		if(!$oModuleModel->getTrigger('comment.deleteComment', 'imageprocess', 'controller', 'triggerDeleteComment', 'before'))
-        	$oModuleController->insertTrigger('comment.deleteComment', 'imageprocess', 'controller', 'triggerDeleteComment', 'before');
+        $oModuleController->insertTrigger('comment.deleteComment', 'imageprocess', 'controller', 'triggerDeleteComment', 'before');
 		
 		if(!$oModuleModel->getTrigger('document.deleteDocument', 'imageprocess', 'controller', 'triggerDeleteDocument', 'before'))
-        	$oModuleController->insertTrigger('document.deleteDocument', 'imageprocess', 'controller', 'triggerDeleteDocument', 'before');
+        $oModuleController->insertTrigger('document.deleteDocument', 'imageprocess', 'controller', 'triggerDeleteDocument', 'before');
 		
 		if(!$oModuleModel->getTrigger('document.moveDocumentModule','imageprocess', 'controller', 'triggerMoveDocument', 'before')) $oModuleController->insertTrigger('document.moveDocumentModule','imageprocess', 'controller', 'triggerMoveDocument', 'before');
 
@@ -119,16 +119,16 @@ class imageprocess extends ModuleObject
 	}
 
 	function moduleUninstall()
-    	{
-       		$oModuleController->deleteTrigger('file.insertFile', 'imageprocess', 'controller', 'triggerInsertFile', 'after');
-        	$oModuleController->deleteTrigger('file.downloadFile', 'imageprocess', 'controller', 'triggerDownloadFile', 'before');
-        	$oModuleController->deleteTrigger('file.deleteFile', 'imageprocess', 'controller', 'triggerDeleteFile', 'after');
-        	$oModuleController->deleteTrigger('comment.deleteComment', 'imageprocess', 'controller', 'triggerDeleteComment', 'before');
-        	$oModuleController->deleteTrigger('document.deleteDocument', 'imageprocess', 'controller', 'triggerDeleteDocument', 'before');
+    {
+       	$oModuleController->deleteTrigger('file.insertFile', 'imageprocess', 'controller', 'triggerInsertFile', 'after');
+        $oModuleController->deleteTrigger('file.downloadFile', 'imageprocess', 'controller', 'triggerDownloadFile', 'before');
+        $oModuleController->deleteTrigger('file.deleteFile', 'imageprocess', 'controller', 'triggerDeleteFile', 'after');
+        $oModuleController->deleteTrigger('comment.deleteComment', 'imageprocess', 'controller', 'triggerDeleteComment', 'before');
+        $oModuleController->deleteTrigger('document.deleteDocument', 'imageprocess', 'controller', 'triggerDeleteDocument', 'before');
 		$oModuleController->deleteTrigger('document.moveDocumentModule','imageprocess', 'controller', 'triggerMoveDocument', 'before');
 
-        	return new Object(0, 'success_deleted'); 
-    	}
+        return new Object(0, 'success_deleted'); 
+    }
 
 
 	/**

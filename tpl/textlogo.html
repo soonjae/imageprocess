@@ -1,8 +1,8 @@
-<!--#include("./header.html")-->
-<!--%import("./filter/textlogo_setup.xml")-->
-<!--%import("./css/colorpicker.css")-->
-<!--%import("./js/colorpicker.js")-->
-<!--%import("./js/imageprocess.js")-->
+<include target="./header.html" />
+<import target="./filter/textlogo_setup.xml" />
+<import taeget="./css/ipx.css" />
+<import target="./js/jscolor.js" />
+<import target="./js/ipx.js" />
 
 
 <form class="x_form-horizontal" action="./" method="get" onsubmit="return procFilter(this, textlogo_setup);">
@@ -81,8 +81,8 @@
     <label class="x_control-label">{$lang->cmd_logo_color}</label>
     <div class="x_controls">
         
-		<span>{$lang->cmd_logo_fg} : <input type="text" name="logo_fg" id="colorpick1" value="<!--@if($imageprocess_info->logo_fg)-->{preg_replace('/^#/','',$imageprocess_info->logo_fg)}<!--@else-->ffffff<!--@end-->" /> {$lang->msg_logo_fg}</span><br />
-        <span>{$lang->cmd_logo_bg} : <input type="text" name="logo_bg" id="colorpick2" value="<!--@if($imageprocess_info->logo_bg)-->{preg_replace('/^#/','',$imageprocess_info->logo_bg)}<!--@else-->000000<!--@end-->" /> {$lang->msg_logo_bg}</span>
+		<span>{$lang->cmd_logo_fg} : <input type="text" name="logo_fg" id="jscolor" class="jscolor" value="<!--@if($imageprocess_info->logo_fg)-->{$imageprocess_info->logo_fg}<!--@else-->ffffff<!--@end-->" /> {$lang->msg_logo_fg}</span><br />
+        <span>{$lang->cmd_logo_bg} : <input type="text" name="logo_bg" id="jscolor" class="jscolor" value="<!--@if($imageprocess_info->logo_bg)-->{$imageprocess_info->logo_bg}<!--@else-->000000<!--@end-->" /> {$lang->msg_logo_bg}</span>
         <br />{$lang->msg_logo_color}
 
         </div>
@@ -103,37 +103,40 @@
         </div>
     </div>
 </section
+
 <section class="section">
-<h1>{$lang->textlogo_use}</h1>
+    <h1>{$lang->textlogo_use}</h1>
 <div class="x_control-group">{$lang->about_image_mid}</div>
 <div class="x_controls"></div>
 <div class="x_control-group">
+            <label class="x_control-label">
+        <input type="checkbox" onclick="XE.checkboxToggleAll('logo_mid'); return false;" /> Check All</label>
 <div class="x_controls">
 <fieldset>
         <!--@foreach($mid_list as $module_category_srl => $modules)-->
-        <div class="module_category_title"><!--@if($modules->title)--> {$modules->title} <!--@else-->{$lang->none_category}<!--@end--></div>
+        <div class="module_category_title"><input type="checkbox" onclick="XE.checkboxToggleAll('logo_mid', { wrap:'section_{$module_category_srl}' });" /><!--@if($modules->title)--> {$modules->title} <!--@else-->{$lang->none_category}<!--@end--></div>
         <div id="section_{$module_category_srl}"><!--@foreach($modules->list as $key => $val)-->
-                        <div class="module_list"><input type="checkbox" value="{$key}" name="logo_mid" id="chk_logo_mid_{$key}" <!--@if(in_array($key,$imageprocess_info->logo_mid))-->checked="checked"<!--@end--> /> {$val->mid} ({$val->browser_title})
-
-                        <div class="each_logo" <!--@if(!in_array($key,$imageprocess_info->logo_mid))-->style="display:none;"<!--@end-->>
-                        <input type="text" name="logo_{$key}" value="{$logo[$key]}" placeholder="{$lang->textlogo}" />
-                        <select name="position_{$key}">
-                        <option value=''>{$lang->logo_position}</option>
-
-                        <!--@foreach($lang->logo_position_type as $k => $v)-->
-                        <option value="{$k}" <!--@if($position[$key] == $k)-->selected="selected"<!--@end-->>{$v} </option>
-                        <!--@end-->
-                        </select>
-                        {$lang->cmd_logo_fg} : <input style="width:50px;" type="text" name="fg_{$key}" id="colorpick1" value="<!--@if($fg[$key])-->{preg_replace('/^#/','',$fg[$key])}<!--@else-->{preg_replace('/^#/','',$imageprocess_info->logo_fg)}<!--@end-->" />
-
-                        {$lang->cmd_logo_bg} : <input type="text"  style="width:50px;" name="bg_{$key}" id="colorpick2" value="<!--@if($bg[$key])-->{preg_replace('/^#/','',$bg[$key])}<!--@else-->{preg_replace('/^#/','',$imageprocess_info->logo_bg)}<!--@end-->" />
-
-                        </div>
-                </div>
+			<div class="module_list">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="{$key}" name="logo_mid" id="chk_logo_mid_{$key}" <!--@if(in_array($key,$imageprocess_info->logo_mid))-->checked="checked"<!--@end--> /> {$val->mid} ({$val->browser_title})
+			
+			<div class="each_logo" <!--@if(!in_array($key,$imageprocess_info->logo_mid))-->style="display:none;"<!--@end-->>
+			<input type="text" name="logo_{$key}" value="{$logo[$key]}" />
+			<select name="position_{$key}">
+			<option value=''>{$lang->logo_position}</option>
+			<!--@foreach($lang->logo_position_type as $k => $v)-->
+			<option value="{$k}" <!--@if($position[$key] == $k)-->selected="selected"<!--@end-->>{$v} </option>
+			<!--@end-->
+			</select>
+			{$lang->cmd_logo_fg} : <input style="width:50px;" type="text" name="fg_{$key}" id="jscolor" class="jscolor"  value="<!--@if($fg[$key])-->{$fg[$key]}<!--@else-->{$imageprocess_info->logo_fg}<!--@end-->" /> 
+		
+			{$lang->cmd_logo_bg} : <input type="text"  style="width:50px;" name="bg_{$key}" id="jscolor" class="jscolor" value="<!--@if($bg[$key])-->{$bg[$key]}<!--@else-->{$imageprocess_info->logo_bg}<!--@end-->" />
+			
+			</div>
+		</div>
         <!--@end--></div>
         <!--@end--></div></div>
-        <!--@end-->
+	<!--@end-->
 </section>
+
     <div class="x_clearfix btnArea">
         <div class="x_pull-left">
         </div>
