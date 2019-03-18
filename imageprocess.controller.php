@@ -44,10 +44,7 @@ class imageprocessController extends imageprocess {
 
                 $file=$args->uploaded_filename;
                 $ext = strtolower(substr(strrchr($args->source_filename,'.'),1));
-                $oModuleModel = &getModel('module');
-                $ipConfig = $oModuleModel->getModuleConfig('imageprocess');
-                $oImageprocessModel = &getModel('imageprocess');
-
+                
 		//Image Rotate
                 if($file && $ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) ){
                         $exif = exif_read_data($file);
