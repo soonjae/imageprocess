@@ -1034,15 +1034,19 @@ class imageprocessModel extends imageprocess
 		if($imageprocess_info->textlogo_use == 'Y')
 		{
 			$logo_mid=explode(";",$imageprocess_info->logo_mid);
-			$info->textlogo = in_array($module_srl, $logo_mid) ? true : false ;
-                	$logo = unserialize($imageprocess_info->each_logo);
-			$info->logo = $logo[$module_srl];
-			$fg = unserialize($imageprocess_info->each_fg);
-			$info->fg = $fg[$module_srl];
-                	$bg = unserialize($imageprocess_info->each_bg);
-			$info->bg = $bg[$module_srl];
-                	$position = unserialize($imageprocess_info->each_text_position);
-			$info->position = $position[$module_srl];
+                        $info->textlogo = in_array($module_srl, $logo_mid) ? true : false ;
+                        $logo = unserialize($imageprocess_info->each_logo);
+                        $info->logo = $logo[$module_srl];
+                        if(!$info->logo) $info->logo = $imageprocess_info->textlogo;
+                        $fg = unserialize($imageprocess_info->each_fg);
+                        $info->fg = $fg[$module_srl];
+                        if(!$info->fg) $info->fg = $imageprocess_info->logo_fg;
+                        $bg = unserialize($imageprocess_info->each_bg);
+                        $info->bg = $bg[$module_srl];
+                        if(!$info->bg) $info->bg = $imageprocess_info->logo_bg;
+                        $position = unserialize($imageprocess_info->each_text_position);
+                        $info->position = $position[$module_srl];
+                        if(!$info->position) $info->position = $imageprocess_info->logo_position;
 		}
 		return $info;
 	}		
