@@ -48,22 +48,6 @@ class imageprocessController extends imageprocess {
                 $ipConfig = $oModuleModel->getModuleConfig('imageprocess');
                 $oImageprocessModel = &getModel('imageprocess');
 
-                $target_mid=explode(";",$ipConfig->target_mid);
-                $store_mid=explode(";",$ipConfig->store_mid);
-                $water_mid=explode(";",$ipConfig->water_mid);
-                $logo_mid=explode(";",$ipConfig->logo_mid);
-                if(!$ipConfig->ext) $ipConfig->ext="jpg";
-                if(!$ipConfig->logo_ext) $ipConfig->logo_ext="jpg";
-                $ext_type ="/\.(".implode("|",explode(";",$ipConfig->ext)).")$/i";
-                $logo_ext_type ="/\.(".implode("|",explode(";",$ipConfig->logo_ext)).")$/i";
-
-                $module_info=$oModuleModel->getModuleInfoByModuleSrl($args->module_srl);
-                $file_mid= $module_info->module_srl;
-                $out_file_size = false;
-
-                $file=$args->uploaded_filename;
-                $ext = strtolower(substr(strrchr($args->source_filename,'.'),1));
-
 		//Image Rotate
                 if($file && $ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) ){
                         $exif = exif_read_data($file);
