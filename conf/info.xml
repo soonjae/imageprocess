@@ -6,12 +6,13 @@
 	<description xml:lang="ko">이미지를 축소하고 워터마크와 로고를 넣어주는 모듈입니다.	</description>
 	<description xml:lang="jp">イメ?ジを縮小してウォ?タ?マ?クとロゴを入れてくれるモジュ?ルです.	</description>
 	<description xml:lang="en">This is a module for storage of image files before resizing and printing watermark.</description>
-    <version>2.2</version>
+    <version>2.3</version>
     <date>2019-03-20</date>
 	<category>accessory</category>
-	<author email_address="soonj@nate.com" link="http://www.wildgreen.co.kr">
+	<author email_address="soonj@nate.com" link="http://soonj.net">
 		<name xml:lang="ko">카르마</name>
 		<name xml:lang="jp">Karma</name>
 		<name xml:lang="en">Karma</name>
 	</author>
+	<link>https://github.com/soonjae/imageprocess</link>	
 </module>

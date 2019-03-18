@@ -1,0 +1,20 @@
+<filter name="module_config" module="imageprocess" act="procImageprocesstAdminInsertModuleConfig">
+	<form />
+	<parameter>
+		<param name="watermark" target="watermark" />
+                <param name="resize" target="resize" />
+                <param name="each_watermark" target="each_watermark" />
+                <param name="each_xmargin" target="each_xmargin" />
+                <param name="each_ymargin" target="each_ymargin" />
+                <param name="water_position" target="water_position" />
+                <param name="textlogo" target="textlogo" />
+                <param name="logo" target="logo" />
+                <param name="fg" target="fg" />
+                <param name="bg" target="bg" />
+                <param name="position" target="position" />
+	</parameter>
+	<response>
+		<tag name="error" />
+		<tag name="message" />
+	</response>
+</filter>

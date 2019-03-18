@@ -1,25 +1,25 @@
-<!--%import("./js/imageProcess.js")-->
-<!--%import("./filter/etc_setup.xml")-->
-<!--#include("./header.html")-->
+<import target="./js/imageProcess.js" />
+<import target="./filter/etc_setup.xml" />
+<include target="./header.html" />
 <form class="x_form-horizontal" action="./" method="get" onsubmit="return procFilter(this, etc_setup);">
 <div class="x_control-group" cond="$EXIF">
-            <label class="x_control-label" for="rotate_use">{$lang->rotate_use}</label>
-            <div class="x_controls" id="rotate_use">
-            <label class="x_inline"><input type="radio" id="rotate_use_N" name="rotate_use" value="N" <!--@if($imageprocess_info->rotate_use!='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
-            <label class="x_inline"><input type="radio" id="rotate_use_Y" name="rotate_use" value="Y" <!--@if($imageprocess_info->rotate_use == 'Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
-         <br /> * {$lang->msg_rotate_use}
+        <label class="x_control-label" for="rotate_use">{$lang->rotate_use}</label>
+        <div class="x_controls" id="rotate_use">
+            	<label class="x_inline"><input type="radio" id="rotate_use_N" name="rotate_use" value="N" <!--@if($imageprocess_info->rotate_use!='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
+            	<label class="x_inline"><input type="radio" id="rotate_use_Y" name="rotate_use" value="Y" <!--@if($imageprocess_info->rotate_use == 'Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
+         	<br /> * {$lang->msg_rotate_use}
+            </div>
+</div>
+<div class="x_control-group" cond="!$EXIF">
+        <label class="x_control-label" for="rotate_use">{$lang->rotate_use}</label>
+        <div class="x_controls" id="rotate_use">
+	        <label class="x_inline"><input type="radio" id="rotate_use_N" name="rotate_use" value="N" disabled />{$lang->notuse}</label>
+        	<label class="x_inline"><input type="radio" id="rotate_use_Y" name="rotate_use" value="N" disabled /></label>
+      	   <br /> * {$lang->msg_rotate_no_use}
         </div>
-    </div>
-	<div class="x_control-group" cond="!$EXIF">
-            <label class="x_control-label" for="rotate_use">{$lang->rotate_use}</label>
-            <div class="x_controls" id="rotate_use">
-            <label class="x_inline"><input type="radio" id="rotate_use_N" name="rotate_use" value="N" disabled />{$lang->notuse}</label>
-            <label class="x_inline"><input type="radio" id="rotate_use_Y" name="rotate_use" value="N" disabled /></label>
-         <br /> * {$lang->msg_rotate_no_use}
-        </div>
-    </div>
-        <div class="x_control-group" id="magic_use">
-			<label class="x_control-label" for="magic_use">{$lang->magic_use}</label>
+</div>
+<div class="x_control-group" id="magic_use">
+<label class="x_control-label" for="magic_use">{$lang->magic_use}</label>
 		<div class="x_controls">
 			<label class="x_inline"><input type="radio" id="magic_use_N" name="magic_use" value="N" <!--@if($imageprocess_info->magic_use!='Y')-->checked="checked"<!--@end--> />{$lang->gd}</label>
             <label class="x_inline"><input type="radio" id="magic_use_Y" name="magic_use" value="Y" <!--@if($imageprocess_info->magic_use == 'Y')-->checked="checked"<!--@end--> />{$lang->magic}</label>

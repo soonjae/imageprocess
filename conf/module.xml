@@ -8,6 +8,7 @@
 		<action name="dispImageprocessAdminEtc" type="view" standalone="true"  admin_index="true" />
 		<action name="dispImageprocessAdminTextlogo" type="view"  standalone="true" />
 
+		<action name="procImageprocessAdminInsertModuleConfig" type="controller"  standalone="true" />
 		<action name="procImageprocessAdminEtcSetup" type="controller"  standalone="true" />
 		<action name="procImageprocessAdminSetup" type="controller"  standalone="true" />
 		<action name="procImageprocessAdminOfileSetup" type="controller"  standalone="true" />

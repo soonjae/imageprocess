@@ -4,7 +4,8 @@
  * @author karma (http://www.wildgreen.co.kr)
  * @brief  imageprocess 모듈의 기본 언어
  **/
-
+$lang->imagick = 'imagick 사용';
+$lang->msg_imagick = 'php에 imagick extension이 설치된 경우에만 사용가능합니다.';
 $lang->msg_logo_point = '폰트 크기를 입력하십시요.';
 $lang->nogroup = "제외시킬 그룹";
 $lang->msg_nogroup ="체크된 그룹의 회원이 업로드한 이미지에는 기능을 적용하지 않습니다.";
@@ -14,16 +15,21 @@ $lang->msg_rotate_no_use = "PHP EXIF extension이 설치되지 않아서 이미�
 $lang->about_imageprocess = "사이즈가 큰 이미지 화일의 크기를 줄이고 워터마크를 새기는 기능을 하는 모듈입니다.";
 $lang->ip_safe_mode ="safe_mode 설정으로 이 서버에서는 ImageMagick의 사용이 불가능합니다.";
 $lang->mgaic_installed ="에 imageMagick이 설치되어있습니다.";
+$lang->cmd_no_original_store = '원본저장 기능이 설정되어 있지 않습니다.';
+$lang->cmd_no_watermark = '워터마크 사용기능이 설정되어 있지 않습니다.';
+$lang->cmd_no_textlogo = '텍스트로고 사용기능이 설정되어 있지 않습니다.';
 
 //$lang->change_kfile ='한글및특수문자화일이름변경';
 $lang->Resize_use = "이미지 축소 사용";
 $lang->Resize_width = "이미지 최대 사이즈";
-$lang->about_image_mid = '사용될 대상을 지정할 수 있습니다.<br />(모두 해제 시 모든 대상에서 사용 가능하지만 개별설정은 적용되지 않습니다.)';
+$lang->about_image_mid = '사용될 대상을 지정할 수 있습니다.';
 $lang->target_width = '기준축';
 $lang->target_width_Y ='가로세로중긴쪽기준';
 $lang->target_width_N ='가로축기준';
 
 $lang->msg_target_width='가로축기준을 선택한 경우 세로축의 크기에 상관없이 가로축이 크면 축소합니다.';
+$lang->cmd_resize ='업로드되는 사진의 크기를 설정된 크기로 리사이즈해줍니다.';
+$lang->cmd_no_resize ='축소사용이 설정되지 않았습니다.';
 $lang->cmd_resize_use = '이미지 축소 설정';
 $lang->cmd_watermark = '워터마크 설정';
 $lang->cmd_original_store ='원본저장 설정';
@@ -74,7 +80,7 @@ $lang->msg_store_path2 ='절대경로를 입력하셔야합니다. 현재 Xe가 
 $lang->msg_store_path ='permission을 707로 수정해야합니다. 입력하지않으면 기존폴더에 저장합니다.<br />가급적 웹접근이 안되는 경로를 권장합니다. ex) ';
 $lang->msg_watermark_use ='워터마크 기능 사용 여부를 설정합니다.';
 $lang->msg_water_position ='워터마크를 새겨넣을 위치를 설정합니다.';
-$lang->msg_Resize_use ='사용을 선택하면 사진을 아래 이미지 최대크기 이상인 화일은 축소저장합니다. 선택하지 않아도 워터마크기능은 별도로 동작합니다.';
+$lang->msg_Resize_use ='사용을 선택하면 사진을 이미지프로세스 모듈에서 설정한 최대크기 이상인 화일은 축소저장합니다. 워터마크기능과 텍스트로고 기능은 별도로 동작합니다.';
 $lang->msg_resize_quality = '100이하의 숫자를 입력합니다. 숫자가 작을수록 화일의 용량은 줄어들지만 사진품질은 떨어집니다.사진의 품질을 유지하려면 100을 입력하십시요. 기본은 80 이며 이미지축소기능을 사용하는 경우만 작동합니다';
 $lang->msg_minimum_width ='가로,세로중 하나라도 최소크기보다 작은 크기의 사진은 조작하지 않습니다.';
 $lang->msg_original_store = '사진을 조작하기 전의 원본 사진을 저장합니다. 축소나 워터마크등의 조작을 한 화일만 저장합니다';

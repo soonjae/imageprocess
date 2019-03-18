@@ -172,7 +172,7 @@ class imageprocessModel extends imageprocess
 			$each_watermark = $ipConfig->each_watermark;
 			$each_xmargin = $ipConfig->each_xmargin;
 			$each_ymargin = $ipConfig->each_ymargin;
-			$each_position = $ipConfig->each_position;
+			$each_position = $ipConfig->each_water_position;
 			$t_mid = $module_info->module_srl;
 
 			if(!$ipConfig->water_quality) $ipConfig->water_quality = 100;
@@ -526,14 +526,14 @@ class imageprocessModel extends imageprocess
 		$module_info = $oModuleModel->getModuleInfoByMid(Context::get('mid'));
 
 		$each_watermark = $ipConfig->each_watermark;
-        $each_xmargin = $ipConfig->each_xmargin;
-        $each_ymargin = $ipConfig->each_ymargin;
-        $each_position = $ipConfig->each_position;
-        $t_mid = $module_info->module_srl;
+	        $each_xmargin = $ipConfig->each_xmargin;
+        	$each_ymargin = $ipConfig->each_ymargin;
+	        $each_position = $ipConfig->each_water_position;
+        	$t_mid = $module_info->module_srl;
 //
 
 		if($each_position[$t_mid]) $water_position = $each_position[$t_mid];
-        else $water_position = $ipConfig->water_position;
+        	else $water_position = $ipConfig->water_position;
 
 		if($each_watermark[$t_mid]) {
             $water = FileHandler::getRealPath($each_watermark[$t_mid]);
@@ -736,7 +736,7 @@ class imageprocessModel extends imageprocess
 		$file_list = $oFileModel->getFiles($upload_target_srl);
 
 		// 첨부파일이 없으면 성공 return
-		if(!is_array($file_list)||!count($file_list)) return new Object();
+		if(!is_array($file_list)||!count($file_list)) return class_exists('BaseObject') ? new BaseObject() : new Object();
 
 		// 실제 파일 삭제
 		$path = array();
@@ -1003,6 +1003,63 @@ class imageprocessModel extends imageprocess
         );
     }
 
+	function getImageprocessConfig($module_srl)
+	{
+		$oModuleModel = &getModel('module');
+    		$imageprocess_info = $oModuleModel->getModuleConfig('imageprocess');
+		$info = new stdClass;
+		if($imageprocess_info->resize_use == 'Y')
+		{
+			$target_mid=explode(";",$imageprocess_info->target_mid);
+			$info->resize = in_array($module_srl, $target_mid) ? true : false ;
+		}
+		if($imageprocess_info->watermark_use == 'Y')
+		{
+			$water_mid=explode(";",$imageprocess_info->water_mid);
+	                $info->watermark = in_array($module_srl, $water_mid) ? true : false ;
+			$info->each_watermark = $imageprocess_info->each_watermark[$module_srl];
+			if(!$info->each_watermark) $info->each_watermark = $imageprocess_info->watermark;
+			$info->each_xmargin = $imageprocess_info->each_xmargin[$module_srl];
+			if(!$info->each_xmargin) $info->each_xmargin = $imageprocess_info->xmargin;
+			$info->each_ymargin = $imageprocess_info->each_ymargin[$module_srl];
+			if(!$info->each_ymargin) $info->each_ymargin = $imageprocess_info->ymargin;
+			$info->water_position = $imageprocess_info->each_water_position[$module_srl];
+			if(!$info->water_position) $info->water_position = $imageprocess_info->water_position;
+		}
+		if($imageprocess_info->original_store == 'Y')
+		{
+			$store_mid=explode(";",$imageprocess_info->store_mid);
+			$info->ofile = in_array($module_srl, $store_mid) ? true : false ;
+		}
+		if($imageprocess_info->textlogo_use == 'Y')
+		{
+			$logo_mid=explode(";",$imageprocess_info->logo_mid);
+			$info->textlogo = in_array($module_srl, $logo_mid) ? true : false ;
+                	$logo = unserialize($imageprocess_info->each_logo);
+			$info->logo = $logo[$module_srl];
+			$fg = unserialize($imageprocess_info->each_fg);
+			$info->fg = $fg[$module_srl];
+                	$bg = unserialize($imageprocess_info->each_bg);
+			$info->bg = $bg[$module_srl];
+                	$position = unserialize($imageprocess_info->each_text_position);
+			$info->position = $position[$module_srl];
+		}
+		return $info;
+	}		
+
+	function getStampList()
+    	{
+        	$txt = fileHandler::readDir('./modules/imageprocess/stamp');
+	        $arr=array();
+        	foreach ($txt as $key)
+        	{
+			if(strtolower(substr(strrchr($key,'.'),1)) != 'png') continue; //png 화일이 아니면 패쓰...
+           	 	$dir = './modules/imageprocess/stamp/'.$key;
+		            $arr[$key] = $dir;
+	       	 }
+        	ksort($arr);
+	        return $arr;
+    	}
 
 }
 /* End of file imageprocess.model.php */

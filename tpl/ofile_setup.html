@@ -1,5 +1,5 @@
 <import target="./filter/ofile_setup.xml"/>
-<include  target="./header.html" />
+<include target="./header.html" />
 <form class="x_form-horizontal" action="./" method="get" onsubmit="return procFilter(this, ofile_setup);">
 <section class="section">
 <div class="x_control-group">
@@ -26,30 +26,6 @@
         </div>
     </div>
 </section>
-<section class="section">
-	<h1>{$lang->original_store}</h1>
-	<div class="x_control-group">{$lang->about_image_mid}</div>
-<div class="x_controls"></div>
-<div class="x_control-group">
-			<label class="x_control-label"><input type="checkbox" onclick="XE.checkboxToggleAll('store_mid'); return false;" /> Check All</label>
-	
-			<div class="x_controls">
-<fieldset>
-<!--@foreach($mid_list as $module_category_srl => $modules)-->
-        <div class="module_category_title"><input type="checkbox" onclick="XE.checkboxToggleAll('store_mid', { wrap:'section_{$module_category_srl}' });" />
-        <!--@if($modules->title)--> {$modules->title} <!--@else-->
-        {$lang->none_category} <!--@end--></div>
-
-        <div id="section_{$module_category_srl}"><!--@foreach($modules->list as $key => $val)-->
-        <div class="module_list">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" value="{$key}" name="store_mid" id="chk_store_mid_{$key}" <!--@if(in_array($key,$imageprocess_info->store_mid))-->checked="checked"<!--@end--> /> {$val->mid}
-        ({$val->browser_title})</div>
-        <!--@end--></div>
-        <!--@end-->
-		</fieldset>
-	</div>
-</div>
-</section>
-
 	<div class="x_clearfix btnArea">
 		<div class="x_pull-left">
 		</div>

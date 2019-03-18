@@ -84,7 +84,7 @@ class imageprocessAdminView extends imageprocess
 		Context::set("each_watermark",$imageprocess_info->each_watermark);
 		Context::set("xmargin",$imageprocess_info->xmargin);
 		Context::set("ymargin",$imageprocess_info->ymargin);
-		Context::set("each_position",$imageprocess_info->each_position);
+		Context::set("each_position",$imageprocess_info->each_water_position);
         Context::set("imageprocess_info",$imageprocess_info);
 
         // mid 목록을 가져옴
@@ -110,7 +110,7 @@ class imageprocessAdminView extends imageprocess
             $module_categories[0]->list = $mid_list;
         }
 	
-	$stampList = $this->getStampList();	
+	$stampList = $oImageprocessModel->getStampList();	
 	Context::set('stampList',$stampList);
 	Context::set('mid_list',$module_categories);
 	Context::set('group_list', $this->group_list);
@@ -170,12 +170,10 @@ class imageprocessAdminView extends imageprocess
     **/
     function dispImageprocessAdminEtc() 
 	{
-    	$EXIF = 1;
-        if (!extension_loaded('exif')) $EXIF=0;
-		COntext::set('EXIF',$EXIF);
+		Context::set('EXIF', extension_loaded('exif') ? 1 : 0);
 
 		$oModuleModel = &getModel('module');
-        $imageprocess_info=$oModuleModel->getModuleConfig('imageprocess');
+	        $imageprocess_info=$oModuleModel->getModuleConfig('imageprocess');
 
 		Context::set('image_types',$this->image_types);
 		Context::set('imageprocess_info',$imageprocess_info);
@@ -206,23 +204,6 @@ class imageprocessAdminView extends imageprocess
 		}
 	}
 
-	/**
-	* 워터마크 화일의 목록
-	**/
-	function getStampList()
-    {
-        $txt = fileHandler::readDir('./modules/imageprocess/stamp');
-        $arr=array();
-        foreach ($txt as $key)
-        {
-			if(strtolower(substr(strrchr($key,'.'),1)) != 'png') continue; //png 화일이 아니면 패쓰...
-            $dir = './modules/imageprocess/stamp/'.$key;
-            $arr[$key] = $dir;
-        }
-        ksort($arr);
-        return $arr;
-    }
-
 	function dispImageprocessAdminTextlogo() 
 	{
 		$oModuleModel = &getModel('module');
@@ -238,9 +219,7 @@ class imageprocessAdminView extends imageprocess
 		Context::set('logo',unserialize($imageprocess_info->each_logo));
 		Context::set('fg',unserialize($imageprocess_info->each_fg));
 		Context::set('bg',unserialize($imageprocess_info->each_bg));
-		$position = $imageprocess_info->each_position;
-                if(!is_array($position)) $position = $imageprocess_info->each_position;
-                Context::set('position',$position);
+                Context::set('position',unserialize($imageprocess_info->each_text_position));
 		$oImageprocessModel = &getModel('imageprocess');
 		$mid_list = $oImageprocessModel->getMidList($args);
 
