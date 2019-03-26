@@ -32,15 +32,6 @@
 		</div>
     </div>
 <div class="x_control-group">
-                        <label class="x_control-label" for="module_category_srl">{$lang->msg_resize_type}</label>
-                        <div class="x_controls">
-                <!--@foreach($lang->ext_type as $val)-->
-                        <label class="x_inline"><input type="checkbox" value="{$val}" name="resize_ext" <!--@if(in_array($val,$imageprocess_info->resize_ext))-->checked="checked"<!--@end--> /> .{$val}</label>
-                <!--@end--> 
-			<label class="x_inline"><input type="checkbox" value="gif" name="resize_ext" <!--@if(in_array('gif',$imageprocess_info->resize_ext))-->checked="checked"<!--@end--> /> .gif</label>{$lang->about_resize_type}
-                </div>
-        </div>
-<div class="x_control-group">
         <label class="x_control-label" for="module_category_srl">{$lang->nogroup}</label>
         <div class="x_controls">
             <!--@foreach($group_list as $key => $val)-->
@@ -50,6 +41,31 @@
         </div>
     </div>
 </section>
+<section class="section">
+    <h1>{$lang->Resize_use}</h1>
+    <div class="x_control-group">{$lang->about_image_mid}
+	<div class="x_controls"></div>
+	</div>
+	<div class="x_control-group">
+            <label class="x_control-label">
+			<input type="checkbox" onclick="XE.checkboxToggleAll('target_mid'); return false;" /> Check All</label>
+	<div class="x_controls">
+	<fieldset>
+		<!--@foreach($mid_list as $module_category_srl => $modules)-->
+		<div class="module_category_title"><input type="checkbox" onclick="XE.checkboxToggleAll('target_mid', { wrap:'section_{$module_category_srl}' });" />
+		<!--@if($modules->title)--> {$modules->title} <!--@else-->
+		{$lang->none_category} <!--@end-->
+		</div>
+		<div id="section_{$module_category_srl}">
+		<!--@foreach($modules->list as $key => $val)-->
+		<div class="module_list">
+		<input type="checkbox" value="{$key}" name="target_mid" id="chk_target_mid_{$key}" <!--@if(in_array($key,$imageprocess_info->target_mid))-->checked="checked"<!--@end--> /> {$val->mid}({$val->browser_title})</div>
+		<!--@end--></div>
+		<!--@end--></fieldset>
+</div>
+</div>
+</section>
+
     <div class="x_clearfix btnArea">
         <div class="x_pull-left">
         </div>

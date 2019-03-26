@@ -15,21 +15,8 @@ class imageprocessModel extends imageprocess
 	{
 	}
 
-	function createImageFile($source_file, $resize_width, $resize_height = 0, $ipConfig) 
+	function GDResize($source_file, $resize_width, $resize_height = 0, $ipConfig) 
 	{
-		$logged_info = Context::get('logged_info');
-		$noresizegroup = explode(";",$ipConfig->noresizegroup);
-		if(count($noresizegroup)==1)
-		{
-			if(array_key_exists($noresizegroup[0],$logged_info->group_list)) return;
-		}
-		elseif(count($noresizegroup) > 1)
-		{
-			foreach($noresizegroup as $group)
-			{
-				if(array_key_exists($group,$logged_info->group_list)) return;
-			}
-		}
 		$quality = $ipConfig->resize_quality;
 		if(!$quality) $quality = 100;
 		$source_file = FileHandler::getRealPath($source_file);
@@ -150,182 +137,160 @@ class imageprocessModel extends imageprocess
 		return true;
 	}
 
-//여기부터
-        function alphaWatermark($source_file,$ipConfig)
+        function GDWatermark($source_file,$ipConfig)
         {
-	        $logged_info = Context::get('logged_info');
-			$nowatergroup = explode(";",$ipConfig->nowatergroup);
-			if(count($nowatergroup)==1)
-			{
-				if(array_key_exists($nowatergroup[0],$logged_info->group_list)) return;
-			}
-			elseif(count($nowatergroup) > 1)
-			{
-				foreach($nowatergroup as $group)
-				{
-					if(array_key_exists($group,$logged_info->group_list)) return;
-				}
-			}
-			$oModuleModel = &getModel('module');
-			$module_info = $oModuleModel->getModuleInfoByMid(Context::get('mid'));
+		$oModuleModel = &getModel('module');
+		$module_info = $oModuleModel->getModuleInfoByMid(Context::get('mid'));
 
-			$each_watermark = $ipConfig->each_watermark;
-			$each_xmargin = $ipConfig->each_xmargin;
-			$each_ymargin = $ipConfig->each_ymargin;
-			$each_position = $ipConfig->each_water_position;
-			$t_mid = $module_info->module_srl;
+		$each_watermark = $ipConfig->each_watermark;
+		$each_xmargin = $ipConfig->each_xmargin;
+		$each_ymargin = $ipConfig->each_ymargin;
+		$each_position = $ipConfig->each_water_position;
+		$t_mid = $module_info->module_srl;
 
-			if(!$ipConfig->water_quality) $ipConfig->water_quality = 100;
-			$source_file = FileHandler::getRealPath($source_file);
+		$source_file = FileHandler::getRealPath($source_file);
 
-			if($each_position[$t_mid]) $position = $each_position[$t_mid];
-			else $position = $ipConfig->water_position;
-			if($each_watermark[$t_mid])
-			{
-				$water = FileHandler::getRealPath($each_watermark[$t_mid]);
-			}
-			else $water = FileHandler::getRealPath($ipConfig->watermark);
-			if($each_xmargin[$t_mid]) $xmargin = $each_xmargin[$t_mid];
-			else $xmargin = $ipConfig->xmargin;
-			if($each_ymargin[$t_mid]) $ymargin = $each_ymargin[$t_mid];
-			else $ymargin = $ipConfig->ymargin;
+		if($each_position[$t_mid]) $position = $each_position[$t_mid];
+		else $position = $ipConfig->water_position;
+		if($each_watermark[$t_mid])
+		{
+			$water = FileHandler::getRealPath($each_watermark[$t_mid]);
+		}
+		else $water = FileHandler::getRealPath($ipConfig->watermark);
+		if($each_xmargin[$t_mid]) $xmargin = $each_xmargin[$t_mid];
+		else $xmargin = $ipConfig->xmargin;
+		if($each_ymargin[$t_mid]) $ymargin = $each_ymargin[$t_mid];
+		else $ymargin = $ipConfig->ymargin;
 
-			$imageInfo = getimagesize($source_file);
-			if(!FileHandler::checkMemoryLoadImage($imageInfo)) $this->check_memory_limit();
+		$imageInfo = getimagesize($source_file);
+		if(!FileHandler::checkMemoryLoadImage($imageInfo)) $this->check_memory_limit();
 
-			list($width, $height, $type, $attrs) = $imageInfo;
-			if($width < 1 || $height < 1) return;
+		list($width, $height, $type, $attrs) = $imageInfo;
+		if($width < 1 || $height < 1) return;
 
-			switch($type)
-			{
-				case '1' :
-					$type = 'gif';
-					break;
-				case '2' :
-					$type = 'jpg';
-					break;
-				case '3' :
-					$type = 'png';
-					break;
-				default :
-					return;
-					break;
-			}
+		switch($type)
+		{
+			case '1' :
+				$type = 'gif';
+				break;
+			case '2' :
+				$type = 'jpg';
+				break;
+			case '3' :
+				$type = 'png';
+				break;
+			default :
+				return;
+				break;
+		}
 
-			// Load the stamp and the photo to apply the watermark to
-			$stamp = @imagecreatefrompng($water);
+		$stamp = @imagecreatefrompng($water);
 
-			 // create temporary image having original type
-			switch($type)
-			{
-				case 'gif' :
-					if(!function_exists('imagecreatefromgif')) return false;
-					$im = @imagecreatefromgif($source_file);
-					break;
-				// jpg
-				case 'jpeg' :
-				case 'jpg' :
-					if(!function_exists('imagecreatefromjpeg')) return false;
-					$im = @imagecreatefromjpeg($source_file);
-					break;
+		switch($type)
+		{
+			case 'gif' :
+				if(!function_exists('imagecreatefromgif')) return false;
+				$im = @imagecreatefromgif($source_file);
+				break;
+			case 'jpeg' :
+			case 'jpg' :
+				if(!function_exists('imagecreatefromjpeg')) return false;
+				$im = @imagecreatefromjpeg($source_file);
+				break;
 				// png
-				case 'png' :
-					if(!function_exists('imagecreatefrompng')) return false;
-					$im = @imagecreatefrompng($source_file);
-					break;
-				default :
-					return;
-			}
+			case 'png' :
+				if(!function_exists('imagecreatefrompng')) return false;
+				$im = @imagecreatefrompng($source_file);
+				break;
+			default :
+				return;
+		}
 
 
-			if(!function_exists('imagecopy')) return false;
+		if(!function_exists('imagecopy')) return false;
 
-			// Set the margins for the stamp and get the height/width of the stamp image
-			$geox = 100;
-			$geoy = 60;
-			$sx = imagesx($stamp);
-			$sy = imagesy($stamp);
-			$cx = (imagesx($im) - $sx) / 2;
-			$cy = (imagesy($im) - $sy) / 2;
-			if($position == "RT")
-			{
-					$locax = imagesx($im) - $sx - $xmargin;
-					$locay = $ymargin;
-			}
-			elseif($position == "CE")
-			{
-					$locax = $cx;
-					$locay = $cy;
-			}
-			elseif($position == "LT")
-			{
-					$locax = $xmargin;
-					$locay = $ymargin;
-			}
-			elseif($position == "LB")
-			{
-					$locax = $xmargin;
-					$locay = imagesy($im) - $sy - $ymargin;
-			}
-			elseif($position == "SE")
-			{
-					$locax = $cx + $geox;
-					$locay = $cy + $geoy;
-			}
-			elseif($position == "NE")
-			{
-					$locax = $cx + $geox;
-					$locay = $cy - $geoy;
-			}
-			elseif($position == "NW")
-			{
-					$locax = $cx - $geox;
-					$locay = $cy - $geoy;
-			}
-			elseif($position == "SW")
-			{
-					$locax = $cx - $geox;
-					$locay = $cy + $geoy;
-			}
-			else
-			{
-					$locax = imagesx($im) - $sx - $xmargin;
-					$locay = imagesy($im) - $sy - $ymargin;
-			}
+		$geox = imagesx($im)/4;
+		$geoy = imagesy($im)/4;
+		$sx = imagesx($stamp);
+		$sy = imagesy($stamp);
+		$cx = (imagesx($im) - $sx) / 2;
+		$cy = (imagesy($im) - $sy) / 2;
 
-			// Copy the stamp image onto our photo using the margin offsets and the photo
-			// width to calculate positioning of the stamp.
-			imagecopy($im, $stamp, $locax, $locay, 0, 0, $sx, $sy);
+		if($position == "RT")
+		{
+			$locax = imagesx($im) - $sx - $xmargin;
+			$locay = $ymargin;
+		}
+		elseif($position == "CE")
+		{
+			$locax = $cx;
+			$locay = $cy;
+		}
+		elseif($position == "LT")
+		{
+			$locax = $xmargin;
+			$locay = $ymargin;
+		}
+		elseif($position == "LB")
+		{
+			$locax = $xmargin;
+			$locay = imagesy($im) - $sy - $ymargin;
+		}
+		elseif($position == "SE")
+		{
+			$locax = $cx + $geox;
+			$locay = $cy + $geoy;
+		}
+		elseif($position == "NE")
+		{
+			$locax = $cx + $geox;
+			$locay = $cy - $geoy;
+		}
+		elseif($position == "NW")
+		{
+			$locax = $cx - $geox;
+			$locay = $cy - $geoy;
+		}
+		elseif($position == "SW")
+		{
+			$locax = $cx - $geox;
+			$locay = $cy + $geoy;
+		}
+		else
+		{
+			$locax = imagesx($im) - $sx - $xmargin;
+			$locay = imagesy($im) - $sy - $ymargin;
+		}
 
-			// write into the file
-			switch($type)
-			{
-					case 'gif' :
-									if(!function_exists('imagegif')) return false;
-									$output = @imagegif($im, $source_file);
-							break;
-					case 'jpeg' :
-					case 'jpg' :
-									if(!function_exists('imagejpeg')) return false;
-									$output = @imagejpeg($im, $source_file, $ipConfig->water_quality);
-							break;
-					case 'png' :
-									if(!function_exists('imagepng')) return false;
-									$output = @imagepng($im, $source_file, 9);
-							break;
-			}
+		imagecopy($im, $stamp, $locax, $locay, 0, 0, $sx, $sy);
 
-			@imagedestroy($im);
-			@imagedestroy($stamp);
+		switch($type)
+		{
+			case 'gif' :
+				if(!function_exists('imagegif')) return false;
+				$output = @imagegif($im, $source_file);
+				break;
+			case 'jpeg' :
+			case 'jpg' :
+				if(!function_exists('imagejpeg')) return false;
+				$output = @imagejpeg($im, $source_file, 100);
+				break;
+			case 'png' :
+				if(!function_exists('imagepng')) return false;
+				$output = @imagepng($im, $source_file, 9);
+				break;
+		}
 
-			return true;
+		@imagedestroy($im);
+		@imagedestroy($stamp);
+
+		return true;
         }
 
-//요까지
-
-	function GDrotate($file,$ext) 
+	function GDrotate($file) 
 	{
-		$exif = exif_read_data($file);
+		$ext = strtolower(substr(strrchr($file,'.'),1));
+		$exif = @exif_read_data($file);
 		if(!empty($exif['Orientation'])) 
 		{
 			$imageInfo = @getimagesize($file);
@@ -380,52 +345,36 @@ class imageprocessModel extends imageprocess
 		}
 	}
 
-	function MagicRotate($file,$magic_path) 
+	function magicRotate($file,$magic_path) 
 	{
 		$realfile = FileHandler::getRealpath($file);
 
-        $exif = exif_read_data($realfile);
+	        $exif = @exif_read_data($realfile);
 		$fn = substr(strrchr($file,'/'),1);
-        $out = '1_'.$fn;
-        $work_path = dirname($realfile);
-        $outfile = $work_path.'/'.$out;
-        $ext = strtolower(substr(strrchr($file,'.'),1));
-        $magic_path = str_replace('\\','/',$magic_path);
-        $command = $magic_path."convert";
+	        $out = '1_'.$fn;
+        	$work_path = dirname($realfile);
+	        $outfile = $work_path.'/'.$out;
+        	$ext = strtolower(substr(strrchr($file,'.'),1));
+	        $magic_path = str_replace('\\','/',$magic_path);
+        	$command = $magic_path."convert";
 
-        if(!empty($exif['Orientation'])) 
+        	if(!empty($exif['Orientation'])) 
 		{
 			$args[] = "-auto-orient";
-//			$args[] = " -strip";
 			$args[] = $fn;
-            $args[] = $out;
+            		$args[] = $out;
 			$out = $this->_imagemagick_convert_exec($args, $work_path, $command);
         	$this->moveFile($outfile,$realfile);
 	        return;
-       }
-    }
+       		}
+    	}
 
 	function magicResize($file,$new_width,$new_height,$ipConfig) 
 	{
-		$logged_info = Context::get('logged_info');
-		$noresizegroup = explode(";",$ipConfig->noresizegroup);
-		if(count($noresizegroup)==1)
-		{
-			if(array_key_exists($noresizegroup[0],$logged_info->group_list)) return;
-		}
-		elseif(count($noresizegroup) > 1)
-		{
-			foreach($noresizegroup as $group)
-			{
-				if(array_key_exists($group,$logged_info->group_list)) return;
-			}
-		}
-		$quality = $ipConfig->resize_quality;
-		if(!$quality) $quality = 100;
 		$magic_path = $ipConfig->magic_path;
 		$realfile = FileHandler::getRealpath($file);
 		list($width, $height,$type)=getimagesize($realfile);
-        if($width <=$new_width && $height <=$new_height)
+        	if($width <=$new_width && $height <=$new_height)
 		{
 			//$this->moveFile($outfile,$realfile);
 			return;
@@ -439,18 +388,18 @@ class imageprocessModel extends imageprocess
 		$command = $magic_path."convert";
 	
 		if($ext == 'gif') //for animated GIF
-        {
+        	{
 
-            $args[] = $fn;
-            $args[] = "-coalesce";
-            $args[] = "-resize " . $new_width . 'x' . $new_height ;
-            $args[] = $out;
-            $this->_imagemagick_convert_exec($args, $work_path, $command);
-        }
+   	         $args[] = $fn;
+        	    	$args[] = "-coalesce";
+ 	           	$args[] = "-resize " . $new_width . 'x' . $new_height ;
+        	    	$args[] = $out;
+	            	$this->_imagemagick_convert_exec($args, $work_path, $command);
+        	}
 		else 
 		{
 			$args[] = "-compress JPEG"; 
-			$args[] = "-quality ".$quality ;
+			$args[] = "-quality ".$ipConfig->resize_quality ;
 			$args[] = "-resize " . $new_width . 'x' . $new_height ;
 			$args[] = $fn;
 			$args[] = $out;
@@ -458,97 +407,22 @@ class imageprocessModel extends imageprocess
 			$out = $this->_imagemagick_convert_exec($args, $work_path, $command);
 		}
 		$this->moveFile($outfile,$realfile);
-
 		return;
-	}
-
-	function magicConvert($file,$magic_path,$target_format,$or_format=null,$tarsize=null)
-	{
-		$raw_format = array('arw','raf','orf','crw','cr2','dng','pef','mrw','x3f','nef'); //for RAW format support
-		//$flat_format = array('psd','eps','xcf','gif');
-		$realfile = FileHandler::getRealpath($file);
-		$fn = substr(strrchr($file,'/'),1);
-		$out = $fn.".".$target_format;
-		$work_path = dirname($realfile);
-		$outfile = $work_path.'/'.$out;
-		$command = $magic_path.'convert';
-		$args[] = $or_format.':'.$fn;	
-		if(in_array($or_format,$raw_format))
-		{
-			$args[] = '-size '.$tarsize.'x';
-			$args[] = '-depth 8';
-		}
-		elseif($or_format == 'eps') 
-		{
-			unset($args);
-			$args[] = '-verbose';
-			$args[] = '-density 600';
-			$args[] = '-geometry 50%';
-			$args[] = $or_format.':'.$fn;	
-		}
-		elseif( $or_format == 'psd')
-		{
-			$args[] = '-flatten';
-		} 
-		$args[] = $target_format.':'.$out;
-		$this->_imagemagick_convert_exec($args, $work_path, $command);
-
-		if(file_exists($outfile)) return $outfile;
-		else return;
 	}
 
 	function magicWatermark($file,$ipConfig)
 	{
-		$logged_info = Context::get('logged_info');
-		$nowatergroup = explode(";",$ipConfig->nowatergroup);
-		if(count($nowatergroup)==1)
-		{
-			if(array_key_exists($nowatergroup[0],$logged_info->group_list)) return;
-		}
-		elseif(count($nowatergroup) > 1)
-		{
-			foreach($nowatergroup as $group)
-			{
-				if(array_key_exists($group,$logged_info->group_list)) return;
-			}
-		}
-
-		if(!$ipConfig->water_quality) $ipConfig->water_quality = 100;
 		$realfile = realpath($file);
 		$fn = substr(strrchr($file,'/'),1);
 		$out = '1_'.$fn;
 		$work_path = dirname($realfile);
 		$ext = strtolower(substr(strrchr($file,'.'),1));
 		$outfile = $work_path.'/'.$out;
+		$water = FileHandler::getRealPath($ipConfig->watermark);
 
-// 추가 //
-		$oModuleModel = &getModel('module');
-		$module_info = $oModuleModel->getModuleInfoByMid(Context::get('mid'));
-
-		$each_watermark = $ipConfig->each_watermark;
-	        $each_xmargin = $ipConfig->each_xmargin;
-        	$each_ymargin = $ipConfig->each_ymargin;
-	        $each_position = $ipConfig->each_water_position;
-        	$t_mid = $module_info->module_srl;
-//
-
-		if($each_position[$t_mid]) $water_position = $each_position[$t_mid];
-        	else $water_position = $ipConfig->water_position;
-
-		if($each_watermark[$t_mid]) {
-            $water = FileHandler::getRealPath($each_watermark[$t_mid]);
-        }
-		else $water = FileHandler::getRealPath($ipConfig->watermark);
-
-        if($each_xmargin[$t_mid]) $xmargin = $each_xmargin[$t_mid];
-        else $xmargin = $ipConfig->xmargin;
-
-        if($each_ymargin[$t_mid]) $ymargin = $each_ymargin[$t_mid];
-        else $ymargin = $ipConfig->ymargin;
-// 추가끝 //
 		$command= $ipConfig->magic_path.'composite'; 
-		$args[] = '-quality '.$ipConfig->water_quality;
-		$args[] = '-gravity '.$this->getGeo($water_position, $xmargin, $ymargin );
+		$args[] = '-quality 100 ';
+		$args[] = '-gravity '.$this->getGeo($ipConfig);
 		$args[] = realpath($water);
 		$args[] = $fn;
 		$args[] = $out;
@@ -646,8 +520,11 @@ class imageprocessModel extends imageprocess
 	}
 
 	
-	function getGeo($position,$xmargin=10,$ymargin=10)
+	function getGeo($ipConfig)
 	{
+		$position = $ipConfig->water_position;
+		$xmargin = $ipConfig->xmargin;
+		$ymargin = $ipConfig->ymargin;
 		$margin = '+'.$xmargin.'+'.$ymargin;
 		if($position == 'NE') $args[] = 'center  -geometry +150-100';
 		elseif($position == 'SW') $geo = 'center  -geometry -150+100';
@@ -661,19 +538,6 @@ class imageprocessModel extends imageprocess
 		return $geo;
 	}
 
-	/*
-	* 포맷변경을 한경우 원본화일을 체크
-	* 소스화일의 확장자가 변경되고 확장자 없는 화일이 있는지 체크
-	*/
-	function checkConvertedFile($args)
-	{
-		$ext1 = strtolower(substr(strrchr($args->source_filename,'.'),1));
-		$ext2 = strtolower(substr(strrchr($args->uploaded_filename,'.'),1));
-		$real_file = str_replace('.'.$ext2,'',$args->uploaded_filename);
-		if($ext1 != $ext2 && file_exists($real_file)) return $real_file;
-		else return false;
-	}
-	
 	// 원본화일의 다운로드 권한설정
 	function getGrantDown($args) 
 	{
@@ -694,11 +558,11 @@ class imageprocessModel extends imageprocess
 		if($t_path) 
 		{
 			$p_list=explode('/',$file);
-            for($i=3;$i<count($p_list)-1;$i++) 
+            		for($i=3;$i<count($p_list)-1;$i++) 
 			{
-                $t_path .= '/'.$p_list[$i];
-                if(!is_dir($t_path)) @mkdir($t_path,0755);
-            }
+                		$t_path .= '/'.$p_list[$i];
+                		if(!is_dir($t_path)) @mkdir($t_path,0755);
+            		}
 			$ofile = $t_path.'/'.$s_file;
 		} else $ofile = str_replace($s_file,$s_name,$file);
 		return $ofile;
@@ -709,15 +573,15 @@ class imageprocessModel extends imageprocess
 		$ofile = NULL;
 		$s_file = substr(strrchr($file,'/'),1);
 		$s_name = 'XeOrg_'.$s_file;
-        if($t_path) 
+        	if($t_path) 
 		{
-            $p_list=explode('/',$file);
-            for($i = 3; $i < count($p_list) - 1; $i++) $t_path .= '/'.$p_list[$i];
-            $ofile = $t_path.'/'.$s_file;
-        } 
+            		$p_list=explode('/',$file);
+            		for($i = 3; $i < count($p_list) - 1; $i++) $t_path .= '/'.$p_list[$i];
+            		$ofile = $t_path.'/'.$s_file;
+        	} 
 		else $ofile = str_replace($s_file,$s_name,$file);
-        return $ofile;
-    }
+        	return $ofile;
+    	}
 
 	function getFolder($file,$depth=0) 
 	{
@@ -754,169 +618,146 @@ class imageprocessModel extends imageprocess
 		return $output;
 	}
 
-	function getConversionName($args) 
-	{
-		$path = sprintf('./files/attach/images/%s/%s', $args->module_srl,getNumberingPath($args->upload_target_srl,3));
-		$file_name = substr(strrchr($args->uploaded_filename,'/'),1);
-		$file = sprintf('%s%s',$path,$file_name);
-		FileHandler::makeDir($path);
-		copy($args->uploaded_filename,$file);
-		if(!file_exists($file)) sleep(1);
-		if(file_exists($file)) 
-		{
-			FileHandler::removeFile($args->uploaded_filename);
-			return $file;
-		} 
-		else return false;
-	}
+	function GDTextLogo($source_file,$config)
+    	{
+       	 	$font = $config->exfont;
+	        $position = $config->logo_position;
+        	$point = $config->logo_point;
 
-	function alphaTextLogo($source_file,$config)
-    {
-        $font = $config->exfont;
-        $position = $config->logo_position;
-        $point = $config->logo_point;
-        $quality = $config->logo_quality;
-//      $color = $config->logo_fg;
-        if(!$quality) $quality = 100;
+        	$source_file = FileHandler::getRealPath($source_file);
+	        $logged_info = Context::get('logged_info');
+        	$logged_info->time = date('Y-m-d',time());
+        	if(!$logged_info) {
+            		$logged_info->user_id = '';
+			$logged_info->nick_name = '';
+            		$logged_info->email_address ='';
+            		$logged_info->user_name = '';
+        	}
+        	$textlogo = $this->mergeKeywords($config->textlogo,$logged_info);
+        	$imageInfo = getimagesize($source_file);
+        	list($width, $height, $type, $attrs) = $imageInfo;
+        	if($width < 1 || $height < 1) return;
 
-        $source_file = FileHandler::getRealPath($source_file);
-        $logged_info = Context::get('logged_info');
-		$config->nologogroup=explode(";",$config->nologogroup);
-		foreach($config->nologogroup as $group) if(array_key_exists($group,$logged_info->group_list)) return;
-        $logged_info->time = date('Y-m-d',time());
-        if(!$logged_info) {
-            $logged_info->user_id = '';
-            $logged_info->nick_name = '';
-            $logged_info->email_address ='';
-            $logged_info->user_name = '';
-        }
-        $textlogo = $this->mergeKeywords($config->textlogo,$logged_info);
-        $imageInfo = getimagesize($source_file);
-        list($width, $height, $type, $attrs) = $imageInfo;
-        if($width < 1 || $height < 1) return;
+	        switch($type)
+        	{
+	            case '1' :
+        	            $type = 'gif';
+                	break;
+	            case '2' :
+        	            $type = 'jpg';
+                	break;
+    	        case '3' :
+        	            $type = 'png';
+                	break;
+            	default :
+                	    return;
+                	break;
+        	}
 
-        switch($type)
-        {
-            case '1' :
-                    $type = 'gif';
-                break;
-            case '2' :
-                    $type = 'jpg';
-                break;
-            case '3' :
-                    $type = 'png';
-                break;
-            default :
-                    return;
-                break;
-        }
-
-        // create temporary image having original type
-        switch($type)
-        {
-            case 'gif' :
+        	// create temporary image having original type
+        	switch($type)
+        	{
+            		case 'gif' :
 				if(!function_exists('imagecreatefromgif')) return false;
 				$im = @imagecreatefromgif($source_file);
-                break;
-            // jpg
-            case 'jpeg' :
-            case 'jpg' :
+                		break;
+            		case 'jpeg' :
+            		case 'jpg' :
 				if(!function_exists('imagecreatefromjpeg')) return false;
 				$im = @imagecreatefromjpeg($source_file);
-                break;
-            // png
-            case 'png' :
+                	break;
+            		case 'png' :
 				if(!function_exists('imagecreatefrompng')) return false;
 				$im = @imagecreatefrompng($source_file);
-                break;
-            default :
-                return;
-        }
+                		break;
+            		default :
+                		return;
+        	}
 
-        // Set the margins for the stamp and get the height/width of the stamp image
-        $marge = 10;
-        $geox = 100;
-        $geoy = 60;
-        $tbox = $this->calculateTextBox($textlogo,$font,$point,0);
-        $sx = $tbox["width"];
-        $sy = $tbox["height"];
+        	// Set the margins for the stamp and get the height/width of the stamp image
+        	$marge = 10;
+        	$geox = 100;
+        	$geoy = 60;
+        	$tbox = $this->calculateTextBox($textlogo,$font,$point,0);
+        	$sx = $tbox["width"];
+        	$sy = $tbox["height"];
 
-        if($position == "center")
-        {
-            $locax = ($width - $sx) / 2;
-            $locay = ($height + $sy) / 2;
-        }
-        elseif($position == "south")
-        {
-            $locax = ($width - $sx) / 2;
-            $locay = $height - $marge;
-        }
-        elseif($position == "north")
-        {
-            $locax = ($width - $sx) / 2;
-            $locay = $marge + $sy;
-        }
-        elseif($position == "northwest")
-        {
-            $locax = $marge;
-            $locay = $marge + $sy;
-        }
-        elseif($position == "southwest")
-        {
-            $locax = $marge;
-            $locay = $height - $marge;
-        }
-        elseif($position == "southeast")
-        {
-            $locax = $width - $sx - $marge;
-            $locay = $height - $marge;
-        }
-        else //if($position == "northeast")
-        {
-            $locax = $width - $sx - $marge;
-            $locay = $marge + $sy;
-        }
+        	if($position == "center")
+        	{
+           		$locax = ($width - $sx) / 2;
+            		$locay = ($height + $sy) / 2;
+        	}
+        	elseif($position == "south")
+        	{
+            		$locax = ($width - $sx) / 2;
+            		$locay = $height - $marge;
+        	}
+        	elseif($position == "north")
+        	{
+            		$locax = ($width - $sx) / 2;
+            		$locay = $marge + $sy;
+        	}
+        	elseif($position == "northwest")
+        	{
+            		$locax = $marge;
+            		$locay = $marge + $sy;
+        	}
+        	elseif($position == "southwest")
+        	{
+            		$locax = $marge;
+            		$locay = $height - $marge;
+        	}
+        	elseif($position == "southeast")
+        	{
+            		$locax = $width - $sx - $marge;
+            		$locay = $height - $marge;
+        	}
+        	else //if($position == "northeast")
+        	{
+            		$locax = $width - $sx - $marge;
+            		$locay = $marge + $sy;
+        	}
 
-        $bgrgb = $this->rgb2array($config->logo_bg);
-        $bg = imagecolorallocate($im, $bgrgb[0], $bgrgb[1], $bgrgb[2]);
-        if($config->logo_style =='stroke')
-        {
-            imagefttext($im, $point, 0, $locax+1, $locay+1, $bg, $font, $textlogo);
-            imagefttext($im, $point, 0, $locax+1, $locay, $bg, $font, $textlogo);
-            imagefttext($im, $point, 0, $locax-1, $locay, $bg, $font, $textlogo);
-            imagefttext($im, $point, 0, $locax-1, $locay-1, $bg, $font, $textlogo);
-            imagefttext($im, $point, 0, $locax+1, $locay-1, $bg, $font, $textlogo);
-            imagefttext($im, $point, 0, $locax, $locay-1, $bg, $font, $textlogo);
-            imagefttext($im, $point, 0, $locax-1, $locay+1, $bg, $font, $textlogo);
-            imagefttext($im, $point, 0, $locax, $locay+1, $bg, $font, $textlogo);
-        }
-        elseif($config->logo_style =='shadow') imagefttext($im, $point, 0, $locax-1, $locay-1, $bg, $font, $textlogo);
-        $fgrgb = $this->rgb2array($config->logo_fg);
+        	$bgrgb = $this->rgb2array($config->logo_bg);
+        	$bg = imagecolorallocate($im, $bgrgb[0], $bgrgb[1], $bgrgb[2]);
+        	if($config->logo_style =='stroke')
+        	{
+        	    imagefttext($im, $point, 0, $locax+1, $locay+1, $bg, $font, $textlogo);
+	            imagefttext($im, $point, 0, $locax+1, $locay, $bg, $font, $textlogo);
+        	    imagefttext($im, $point, 0, $locax-1, $locay, $bg, $font, $textlogo);
+	            imagefttext($im, $point, 0, $locax-1, $locay-1, $bg, $font, $textlogo);
+        	    imagefttext($im, $point, 0, $locax+1, $locay-1, $bg, $font, $textlogo);
+	            imagefttext($im, $point, 0, $locax, $locay-1, $bg, $font, $textlogo);
+        	    imagefttext($im, $point, 0, $locax-1, $locay+1, $bg, $font, $textlogo);
+	            imagefttext($im, $point, 0, $locax, $locay+1, $bg, $font, $textlogo);
+        	}
+        	elseif($config->logo_style =='shadow') imagefttext($im, $point, 0, $locax-1, $locay-1, $bg, $font, $textlogo);
+        	$fgrgb = $this->rgb2array($config->logo_fg);
 
-        $fg =  imagecolorallocate($im, $fgrgb[0], $fgrgb[1], $fgrgb[2]);
-        imagefttext($im, $point, 0, $locax, $locay, $fg, $font, $textlogo);
+        	$fg =  imagecolorallocate($im, $fgrgb[0], $fgrgb[1], $fgrgb[2]);
+        	imagefttext($im, $point, 0, $locax, $locay, $fg, $font, $textlogo);
 
-    // write into the file
-        switch($type)
-        {
-            case 'gif' :
+    		// write into the file
+        	switch($type)
+        	{
+           	 case 'gif' :
 				if(!function_exists('imagegif')) return false;
 				$output = @imagegif($im, $source_file);
-                break;
-            case 'jpeg' :
-            case 'jpg' :
+                	break;
+            	case 'jpeg' :
+            	case 'jpg' :
 				if(!function_exists('imagejpeg')) return false;
-				$output = @imagejpeg($im, $source_file, $quality);
-                break;
-            case 'png' :
+				$output = @imagejpeg($im, $source_file, 100);
+                	break;
+            	case 'png' :
 				if(!function_exists('imagepng')) return false;
 				$output = @imagepng($im, $source_file, 9);
-                break;
-        }
-        @imagedestroy($im);
-        if(!$output) return false;
-        return true;
-    }
+                	break;
+        	}
+        	@imagedestroy($im);
+        	if(!$output) return false;
+       	 	return true;
+    	}
 
     function calculateTextBox($text,$fontFile,$fontSize,$fontAngle) 
 	{
@@ -937,11 +778,7 @@ class imageprocessModel extends imageprocess
 
     function magicTextLogo($file,$config)
     {
-		$logged_info = Context::get('logged_info');
-        $config->nologogroup=explode(";",$config->nologogroup);
-        foreach($config->nologogroup as $group) if(array_key_exists($group,$logged_info->group_list)) return;
-
-        if(!$config->quality) $config->quality = 100;
+	$logged_info = Context::get('logged_info');
         $realfile = realpath($file);
         $fn = substr(strrchr($file,'/'),1);
         $out = '1_'.$fn;
@@ -969,7 +806,7 @@ class imageprocessModel extends imageprocess
         else $draw_command = sprintf("gravity %s fill '%s' text 13,3 '%s' fill '%s' text 14,4 '%s'",$config->logo_position, $config->logo_bg,$textlogo,$config->logo_fg, $textlogo);
         $command= $config->magic_path.'convert';
         $args[] = $fn;
-        $args[] = '-quality '.$config->logo_quality;
+        $args[] = '-quality 100';
         $args[] = '-font '.$font;
         $args[] = '-pointsize '.$config->logo_point;
         $args[] = '-draw "'.$draw_command.'"';
@@ -980,7 +817,8 @@ class imageprocessModel extends imageprocess
         return;
     }
 
-	function mergeKeywords($text, &$obj) {
+    function mergeKeywords($text, &$obj) 
+    {
         if (!is_object($obj)) return $text;
 
         foreach ($obj as $key => $val)
@@ -1034,19 +872,19 @@ class imageprocessModel extends imageprocess
 		if($imageprocess_info->textlogo_use == 'Y')
 		{
 			$logo_mid=explode(";",$imageprocess_info->logo_mid);
-                        $info->textlogo = in_array($module_srl, $logo_mid) ? true : false ;
-                        $logo = unserialize($imageprocess_info->each_logo);
-                        $info->logo = $logo[$module_srl];
-                        if(!$info->logo) $info->logo = $imageprocess_info->textlogo;
-                        $fg = unserialize($imageprocess_info->each_fg);
-                        $info->fg = $fg[$module_srl];
-                        if(!$info->fg) $info->fg = $imageprocess_info->logo_fg;
-                        $bg = unserialize($imageprocess_info->each_bg);
-                        $info->bg = $bg[$module_srl];
-                        if(!$info->bg) $info->bg = $imageprocess_info->logo_bg;
-                        $position = unserialize($imageprocess_info->each_text_position);
-                        $info->position = $position[$module_srl];
-                        if(!$info->position) $info->position = $imageprocess_info->logo_position;
+			$info->textlogo = in_array($module_srl, $logo_mid) ? true : false ;
+                	$logo = unserialize($imageprocess_info->each_logo);
+			$info->logo = $logo[$module_srl];
+			if(!$info->logo) $info->logo = $imageprocess_info->textlogo;
+			$fg = unserialize($imageprocess_info->each_fg);
+			$info->fg = $fg[$module_srl];
+			if(!$info->fg) $info->fg = $imageprocess_info->logo_fg;
+                	$bg = unserialize($imageprocess_info->each_bg);
+			$info->bg = $bg[$module_srl];
+			if(!$info->bg) $info->bg = $imageprocess_info->logo_bg;
+                	$position = unserialize($imageprocess_info->each_text_position);
+			$info->position = $position[$module_srl];
+			if(!$info->position) $info->position = $imageprocess_info->logo_position;
 		}
 		return $info;
 	}		
@@ -1064,6 +902,439 @@ class imageprocessModel extends imageprocess
         	ksort($arr);
 	        return $arr;
     	}
+
+	function insertEXIF($args)
+	{
+		$output = executeQuery('imageprocess.insertexif', $args);
+		return $output;
+	}
+
+	function getEXIF($args)
+	{
+		if(!$args->file_srl) return;
+//		if(!$args->target_srl) return;
+		$output = executeQuery('imageprocess.getexif', $args);
+		return $output->data;
+	}
+
+	function deleteEXIF($args)
+        {
+                $output = executeQuery('imageprocess.deleteexif', $args);
+		return $output;
+        }
+
+	function imagickdo($file,$ipConfig)
+	{
+		$oModuleModel = &getModel('module');
+                $module_info=$oModuleModel->getModuleInfoByModuleSrl($ipConfig->fileargs->module_srl);
+                $file_mid= $module_info->module_srl;
+		$logged_info = Context::get('logged_info');
+		$ext = strtolower(substr(strrchr($file,'.'),1));
+
+		list($original_width, $original_height, $orginal_type) = getimagesize($file);
+		$image = new \Imagick($file);
+                $image->setResourceLimit(imagick::RESOURCETYPE_MEMORY, 126*1024*1024);
+                $image->setResourceLimit(imagick::RESOURCETYPE_MAP, 126*1024*1024);
+		$exif = @exif_read_data($file, 'IFD0');
+		if($ipConfig->exif_del == 'S') 
+		{
+			$args = new stdClass;
+			$args->member_srl = $logged_info->member_srl;
+			$args->file_srl = $ipConfig->fileargs->file_srl;
+			$args->regdate = date('YmdHis');
+			$args->target_srl = $ipConfig->fileargs->upload_target_srl;
+			$args->exif = serialize($this->returnExif($exif));
+			$args->gps = serialize($this->returnGps($exif));
+			$output = $this->insertEXIF($args);	
+		}
+		if($ipConfig->exif_del == 'S' || $ipConfig->exif_del == 'Y')
+		{
+                	$profiles = $image->getImageProfiles("icc", true);
+                        $image->stripImage();
+                        if(!empty($profiles))   $image->profileImage("icc", $profiles['icc']);
+		}
+
+		$count = 0;
+		$newSize = $this->getNewsize($file, $ipConfig);
+		$newwidth = $newSize->width;
+		$newheight = $newSize->height;
+
+		if($ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) )
+                {
+                        if($exif['Orientation'] == '6' || $exif['Orientation'] == '3' || $exif['Orientation'] == '8')
+                        {
+                                $count++;
+				$image = $this->autorotate($image);
+				if($exif['Orientation'] == '6' || $exif['Orientation'] == '8')
+				{
+					$newwidth = $newSize->height;
+		                	$newheight = $newSize->width;
+				}
+                        }
+                }
+                if($ipConfig->resize_use == 'Y' && preg_match($ipConfig->resize_type, $file) &&  in_array($file_mid,$ipConfig->target_mid) && ($original_width > $ipConfig->resize_width || $original_height > $ipConfig->resize_width  ))
+                {
+                        if($this->checkGroup($ipConfig->noresizegroup))
+                        {
+                                if($newSize) 
+				{
+					$count++;
+					$image->setCompression(Imagick::COMPRESSION_JPEG);
+					$image->setCompressionQuality($ipConfig->resize_quality);
+					$image->resizeImage($newwidth, $newheight, Imagick::FILTER_LANCZOS,1);
+				}
+                        }
+                }
+
+                //여기부터 워터마크
+                if($ipConfig->watermark_use == 'Y' && preg_match($ipConfig->ext_type, $file) &&  in_array($file_mid,$ipConfig->water_mid) && $original_width > $ipConfig->minimum_width && $original_height > $ipConfig->minimum_width )
+                {
+                        if($this->checkGroup($ipConfig->nowatergroup))
+                        {
+				$count++;
+                                $position = $ipConfig->water_position;
+		                $xmargin = $ipConfig->xmargin;
+                		$ymargin = $ipConfig->ymargin;
+                	$watermark = new \Imagick();
+	                $watermark->readImage($ipConfig->watermark);
+
+        	        $sx = $watermark->getImageWidth();
+                	$sy = $watermark->getImageHeight();
+	                $imagex	= $image->getImageWidth();
+        	        $imagey = $image->getImageHeight();
+                	$geox = $imagex/4;
+	                $geoy = $imagey/4;
+        	        $cx = ($imagex - $sx) / 2;
+                	$cy = ($imagey - $sy) / 2;
+ 			if($position == "LT")
+                	{
+                        	$locax = $xmargin;
+	                        $locay = $ymargin;
+        	        }
+                	elseif($position == "CE")
+                	{
+                        	$locax = $cx;
+                        $locay = $cy;
+	                }
+	                elseif($position == "RB")
+        	        {
+                	         $locax = $imagex - $sx - $xmargin;
+                        	 $locay = $imagey - $sy - $ymargin;
+                }
+                elseif($position == "LB")
+                {
+                         $locax = $xmargin;
+                         $locay = $imagey - $sy - $ymargin;
+                }
+                elseif($position == "SE")
+                {
+                         $locax = $cx + $geox;
+                         $locay = $cy + $geoy;
+                }
+                elseif($position == "NE")
+                {
+                          $locax = $cx + $geox;
+                          $locay = $cy - $geoy;
+                }
+                elseif($position == "NW")
+                {
+                         $locax = $cx - $geox;
+                         $locay = $cy - $geoy;
+                }
+                elseif($position == "SW")
+                {
+                         $locax = $cx - $geox;
+                         $locay = $cy + $geoy;
+                }
+ 		else
+                {
+                        $locax = $imagex - $sx - $xmargin;
+                        $locay = $ymargin;
+                 }
+
+                $image->compositeImage($watermark, Imagick::COMPOSITE_OVER, $locax, $locay);
+			$watermark->clear();
+                        }
+                }
+
+                //여기부터 텍스트로고
+                if($ipConfig->textlogo_use == 'Y' && preg_match($ipConfig->logo_ext_type, $file) &&  in_array($file_mid,$ipConfig->logo_mid) && $original_width > $ipConfig->logo_minimum_width && $original_height > $ipConfig->logo_minimum_width )
+                {
+                       	if($this->checkGroup($ipConfig->nologogroup))
+	                {
+				$count++;
+        	                $position_type = array(
+                        	'southeast' => \Imagick::GRAVITY_SOUTHEAST,
+                       		'south' => \Imagick::GRAVITY_SOUTH,
+	                	'northeast' => \Imagick::GRAVITY_NORTHEAST,
+        	        	'northwest' => \Imagick::GRAVITY_NORTHWEST,
+                       		'north' => \Imagick::GRAVITY_NORTH,
+                        	'southwest' => \Imagick::GRAVITY_SOUTHWEST,
+	                        'center' => \Imagick::GRAVITY_CENTER,
+        	        	);
+//	        	        $logged_info = Context::get('logged_info');
+        	        	$logged_info->time = date('Y-m-d',time());
+	        	        if(!$logged_info) 
+				{
+        	                	$logged_info->user_id = '';
+	                	        $logged_info->nick_name = '';
+        	                	$logged_info->email_address ='';
+	        	                $logged_info->user_name = '';
+        	        	}
+		                $textlogo = $this->mergeKeywords($ipConfig->textlogo,$logged_info);
+        		        $gr= $position_type[$ipConfig->logo_position];
+	        	        $draw = new \ImagickDraw();
+
+                		$draw->setFont($ipConfig->exfont);
+	        	        $draw->setFontSize($ipConfig->logo_point);
+		                $draw->setGravity($gr);
+                		if($ipConfig->logo_style == 'stroke')
+        	        	{
+	                        	$draw->setStrokeWidth(1);
+	                        	$draw->setStrokeAntialias(true);
+        	        	        $draw->setTextAntialias(true);
+        		                $draw->setStrokeColor($ipConfig->logo_bg);
+	                	}
+	                	elseif($ipConfig->logo_style == 'shadow')
+ 				{
+	        	                $draw->setFillColor($ipConfig->logo_bg); //set shadow color
+                        		$image->annotateImage($draw, 10 + 1, 10 + 1, 0, $textlogo);
+                		}
+	        	        $draw->setFillColor($ipConfig->logo_fg);
+		                $image->annotateImage($draw, 10, 10, 0, $textlogo);
+				$draw->clear();
+                	        }
+                	}
+			if($count) $image->writeimage($file);
+                	$image->clear();
+	}
+
+	function getNewsize($file, $ipConfig)
+        {
+                list($width, $height,$type)=getimagesize($file);
+                if(!$type || $type>3) return; //1:GIF, 2:JPG, 3:PNG
+                $target_size = $ipConfig->resize_width;
+                if($height <= $ipConfig->minimum_width || $width <= $ipConfig->minimum_width) return false;
+                if($height <= $target_size && $width <= $target_size) return false;
+                $obj = new stdClass;
+                if($ipConfig->target_width == 'N' && $width>$target_size)
+                {
+                        $obj->width = $target_size;
+                        $obj->height = round($height*$target_size/$width);
+                }
+                elseif ($ipConfig->target_width == 'Y' && ($width>$target_size || $height>$target_size))
+                {
+                        if($width>$height)
+                        {
+                                $obj->width = $target_size;
+                                $obj->height = round($height*$target_size/$width);
+                        }
+                        else
+                        {
+                                $obj->height = $target_size;
+                                $obj->width = round($width*$target_size/$height);
+                        }
+                }
+                return $obj;
+        }
+	
+	function autorotate(Imagick $image)
+	{
+    		switch ($image->getImageOrientation()) 
+		{
+    		case Imagick::ORIENTATION_TOPLEFT:
+        		break;
+    		case Imagick::ORIENTATION_TOPRIGHT:
+        		$image->flopImage();
+        		break;
+    		case Imagick::ORIENTATION_BOTTOMRIGHT:
+        		$image->rotateImage("#000", 180);
+        		break;
+    		case Imagick::ORIENTATION_BOTTOMLEFT:
+        		$image->flopImage();
+        		$image->rotateImage("#000", 180);
+        		break;
+    		case Imagick::ORIENTATION_LEFTTOP:
+        		$image->flopImage();
+        		$image->rotateImage("#000", -90);
+        		break;
+    		case Imagick::ORIENTATION_RIGHTTOP:
+        		$image->rotateImage("#000", 90);
+        		break;
+    		case Imagick::ORIENTATION_RIGHTBOTTOM:
+        		$image->flopImage();
+        		$image->rotateImage("#000", 90);
+        		break;
+    		case Imagick::ORIENTATION_LEFTBOTTOM:
+        		$image->rotateImage("#000", -90);
+        		break;
+    		default: // Invalid orientation
+        		break;
+    		}
+   		 $image->setImageOrientation(Imagick::ORIENTATION_TOPLEFT);
+    		return $image;
+	}
+
+	function checkGroup($group)
+        {
+                if(!$group) return true;
+                $nogroup = explode(";",$group);
+                if(!count($nogroup)) return true;
+                $logged_info = Context::get('logged_info');
+                if(!$logged_info)  return true;
+                foreach($nogroup as $egroup)
+                {
+                        if(array_key_exists($egroup,$logged_info->group_list)) return false;
+                }
+                return true;
+        }
+	
+	private function returnExif($exif_data)
+	{
+	        $ExMode = array('Auto exposure','Manual exposure','Auto bracket');
+        	$uni_pattern = '<span><b>%s</b>%s</span>';
+	        $flashfired = ($exif_data['Flash'] & 1) != 0;
+        	$Flash = array('Not Fired','Fired');
+	        $Exposure = array('자동','수동','프로그램','조리개우선','셔터우선','정물사진모드','스포츠모드','인물사진모드','풍경사진모드');
+        	$WB = array('Auto','Manual');
+	        $Metering = array('','평균평가측광','중앙부중점측광','스팟측광','멀티스팟측광','패턴측광','부분측>광');
+
+	        if(!$exif_data['Make']) $exif_data['Make'] = "Unknown";
+        	if(!$exif_data['Model']) $exif_data['Model'] = "Unknown";
+	        if($exif_data['DateTimeOriginal'] == $exif_data['DateTime'])
+        	$exif_data['DateTime'] = null;
+	        if($exif_data['DateTimeDigitized'] == '0000:00:00 00:00:00')
+        	$exif_data['DateTimeOriginal'] = null;
+	        if($exif_data['COMPUTED']['Width'] == $exif_data['ExifImageWidth'])
+        	$exif_data['COMPUTED']['Width'] = null;
+	        $replace = array(
+        	        array('카메라제조사', $exif_data['Make']),
+                	array('카메라모델명', $exif_data['Model']),
+	                array('소프트웨어', $exif_data['Software'], substr($exif_data['Software'],0,30)),
+        	        array('촬영일자', $exif_data['DateTimeOriginal']),
+                	array('저장일자', $exif_data['DateTime']),
+	                array('촬영자', $exif_data['Artist']),
+        	        array('감도(ISO)', $exif_data['ISOSpeedRatings']),
+                	array('촬영모드', $exif_data['ExposureProgram'], $Exposure[$exif_data['ExposureProgram']]),
+	                array('노출모드', $exif_data['ExposureMode'], $ExMode[$exif_data['ExposureMode']]),
+        	        array('측광모드', $exif_data['MeteringMode'], $Metering[$exif_data['MeteringMode']]),
+                	array('노출시간', $exif_data['ExposureTime']),
+	                array('조리개 값', $exif_data['COMPUTED']['ApertureFNumber']),
+        	        array('촛점거리', $exif_data['FocalLength']),
+                	array('조리개 최대개방', $exif_data['MaxApertureValue']),
+	                array('노출보정', $exif_data['ExposureBiasValue'], $exif_data['ExposureBiasValue']),
+        	        array('플래쉬', $flashfired, $Flash[$flashfired]),
+                	array('35mm 환산', $exif_data['FocalLengthIn35mmFilm']),
+	                array('화이트밸런스', $exif_data['WhiteBalance'], $WB[$exif_data['WhiteBalance']]),
+        	        array('사진 크기', $exif_data['COMPUTED']['Width'], $exif_data['COMPUTED']['Width'].' X '.$exif_data['COMPUTED']['Height']),
+                	array('원본사진 크기', $exif_data['ExifImageWidth'], $exif_data['ExifImageWidth'].' X '.$exif_data['ExifImageLength'])
+	        );
+	
+        	$exif_info = array();
+	        for($i=0;$i<count($replace);$i++)
+        	{
+                	if($replace[$i][2])
+	                        $value = $replace[$i][2];
+        	        else
+                	        $value = $replace[$i][1];
+	                if(isset($replace[$i][1]))
+        	                $exif_info[] = sprintf($uni_pattern, $replace[$i][0], $value);
+	        }
+        	return $exif_info;
+	}
+
+	private function returnGps($exif_data)
+	{
+        	$uni_pattern = '<span><b>%s</b>%s</span>';
+	        $latitude = $longitude = $altitude = $gps = null;
+        	$exif_info = array();
+	        if($exif_data['GPSLongitude'] && $exif_data['GPSLatitude'])
+        	{
+	                $latitude = sprintf($uni_pattern, '위도', $exif_data['GPSLatitudeRef'].' '.self::gps($exif_data["GPSLatitude"]));
+        	        $longitude = sprintf($uni_pattern, '경도',$exif_data['GPSLongitudeRef'].' '.self::gps($exif_data['GPSLongitude']));
+                	if($exif_data['GPSAltitude']) $altitude = sprintf( $uni_pattern, '고도', '해발 '.self::gpsaltitude($exif_data['GPSAltitude']).'m');
+	                $gps = self::triphoto_getGPS($exif_data);
+        	        $exif_info[] = sprintf('<span class="exif_gps" title="%s"><sub title="%s,%s"></sub>%s%s%s</span></span>','클릭하면 지도에 위치를 표시합니다',$gps['latitude'],$gps['longitude'],$latitude,$longitude,$altitude);
+        		return $exif_info;
+		}
+		else return;
+	}	
+
+	function triphoto_getGPS($exif)
+        {
+                $LatM = 1; $LongM = 1;
+                if($exif["GPSLatitudeRef"] == 'S')
+                $LatM = -1;
+                if($exif["GPSLongitudeRef"] == 'W')
+                $LongM = -1;
+
+                $gps['LatDegree']=$exif["GPSLatitude"][0];
+                $gps['LatMinute']=$exif["GPSLatitude"][1];
+                $gps['LatgSeconds']=$exif["GPSLatitude"][2];
+                $gps['LongDegree']=$exif["GPSLongitude"][0];
+                $gps['LongMinute']=$exif["GPSLongitude"][1];
+                $gps['LongSeconds']=$exif["GPSLongitude"][2];
+                foreach($gps as $key => $value)
+                {
+                        $pos = strpos($value, '/');
+                        if($pos !== false)
+                        {
+                                $temp = explode('/',$value);
+                                $gps[$key] = $temp[0] / $temp[1];
+                        }
+                }
+
+                $result['latitude'] = $LatM * ($gps['LatDegree'] + ($gps['LatMinute'] / 60) + ($gps['LatgSeconds'] / 3600));
+                $result['longitude'] = $LongM * ($gps['LongDegree'] + ($gps['LongMinute'] / 60) + ($gps['LongSeconds'] / 3600));
+
+                return $result;
+        }
+
+        function gpsaltitude($coordinate)
+        {
+                if(!$coordinate) return false;
+                $part = explode('/', $coordinate);
+                if($part[0] == 0)
+                        return 0;
+                elseif($part[1] == 1 || count($part) ==1)
+                        return $part[0];
+                else
+                        return number_format(floatval($part[0])/floatval($part[1]));
+        }
+
+        function gps($coordinate)
+        {
+                for ($i = 0; $i < 3; $i++)
+                {
+                        $part = explode('/', $coordinate[$i]);
+                        if (count($part) == 1)
+                        {
+                                $coordinate[$i] = $part[0];
+                        }
+                        elseif(count($part) == 2)
+                        {
+                                $coordinate[$i] = floatval($part[0])/floatval($part[1]);
+                        } else
+                        {
+                              $coordinate[$i] = 0;
+                        }
+                }
+                list($degrees, $minutes, $seconds) = $coordinate;
+                return $degrees.'.'.sprintf("%02s",$minutes).'.'.sprintf("%02s",$seconds);
+        }
+
+	function clearEXIF($file)
+        {
+		$image = new \Imagick($file);
+		$image->setImageColorSpace(Imagick::COLORSPACE_SRGB);
+                $profiles = $image->getImageProfiles("icc", true);
+                $image->stripImage();
+                if(!empty($profiles))   $image->profileImage("icc", $profiles['icc']);
+		$image->setImageFormat("png");
+                $image->writeimage($file);
+                $image->clear();
+        }
+
 
 }
 /* End of file imageprocess.model.php */

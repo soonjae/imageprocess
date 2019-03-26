@@ -18,21 +18,15 @@
            <br /> * {$lang->msg_textlogo_use}
 		</div>
     </div>
-	<div class="x_control-group">
-    <label class="x_control-label">{$lang->msg_watermark_type}</label>
+<div class="x_control-group">
+    	<label class="x_control-label">{$lang->msg_watermark_type}</label>
         <div class="x_controls">
 		<!--@foreach($lang->ext_type as $val)-->
 	<label class="x_inline"><input type="checkbox" value="{$val}" name="logo_ext" <!--@if(in_array($val,$imageprocess_info->logo_ext))-->checked="checked"<!--@end--> /> .{$val}</label>
 		<!--@end--> {$lang->abount_target_watermark}
-		</div>
 	</div>
-	<div class="x_control-group">
-    <label class="x_control-label">{$lang->logo_quality}</label>
-        <div class="x_controls">
-		<input type="text" name="logo_quality" value="{$imageprocess_info->logo_quality}" class="inputTypeText w40" > <br /><br />{$lang->msg_water_quality}
-	</div>
-    </div>
-	<div class="x_control-group">
+</div>
+<div class="x_control-group">
     <label class="x_control-label">{$lang->logo_position}</label>
 	<div class="x_controls">
 				<!--@foreach($lang->logo_position_type as $key => $val)-->
@@ -95,18 +89,17 @@
         <label class="x_control-label" for="module_category_srl">{$lang->nogroup}</label>
         <div class="x_controls">
             <!--@foreach($group_list as $key => $val)-->
-            <input type="checkbox" value="{$key}" name="noLogoGroup" <!--@if(in_array($key,$imageprocess_info->nologogroup))-->checked="checked"<!--@end--> id="member_group_{$key}"/> {$val->title} ;
+            <input type="checkbox" value="{$key}" name="noLogoGroup" <!--@if(in_array($key,$imageprocess_info->nologogroup))-->checked="checked"<!--@end--> id="member_group_{$key}"/>{$val->title} 
             <!--@end-->
             <br>{$lang->msg_nogroup}
         </div>
     </div>
-</section
+</section>
 
-    <div class="x_clearfix btnArea">
-        <div class="x_pull-left">
-        </div>
+<div class="x_clearfix btnArea">
+        <div class="x_pull-left"></div>
         <div class="x_pull-right">
-            <button class="x_btn x_btn-primary" type="submit">{$lang->cmd_save}</button>
+                <button class="x_btn x_btn-primary" type="submit">{$lang->cmd_save}</button>
     </div>
 </div>
-</form>
+

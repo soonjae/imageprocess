@@ -1,0 +1,13 @@
+<query id="insertexif" action="insert">
+    <tables>
+        <table name="imageexif" />
+    </tables>
+    <columns>
+        <column name="file_srl" var="file_srl" filter="number" notnull="notnull" />
+        <column name="target_srl" var="target_srl" filter="number" notnull="notnull" />
+	<column name="member_srl" var="member_srl" filter="number" default="0" notnull="notnull" />
+        <column name="exif" var="exif"  />
+        <column name="gps" var="gps"  />
+        <column name="regdate" var="regdate" />
+    </columns>
+</query>

@@ -1,4 +1,4 @@
-<import target="./js/imageProcess.js" />
+<import target="./js/imageprocess.js" />
 <import target="./filter/etc_setup.xml" />
 <include target="./header.html" />
 <form class="x_form-horizontal" action="./" method="get" onsubmit="return procFilter(this, etc_setup);">
@@ -21,13 +21,23 @@
 <div class="x_control-group" id="magic_use">
 <label class="x_control-label" for="magic_use">{$lang->magic_use}</label>
 		<div class="x_controls">
-			<label class="x_inline"><input type="radio" id="magic_use_N" name="magic_use" value="N" <!--@if($imageprocess_info->magic_use!='Y')-->checked="checked"<!--@end--> />{$lang->gd}</label>
-            <label class="x_inline"><input type="radio" id="magic_use_Y" name="magic_use" value="Y" <!--@if($imageprocess_info->magic_use == 'Y')-->checked="checked"<!--@end--> />{$lang->magic}</label>
+			<label class="x_inline"><input type="radio" id="magic_use_N" name="magic_use" value="N" checked="checked"|cond="$imageprocess_info->magic_use != 'I' && $imageprocess_info->magic_use != 'Y'"  />{$lang->gd}</label>
+			<label class="x_inline"><input type="radio" id="magic_use_I" name="magic_use" value="I" checked="checked"|cond="$imageprocess_info->magic_use == 'I'" disabled="disabled"|cond="!$IMAGICK" />{$lang->imagick}</label>
+            		<label class="x_inline"><input type="radio" id="magic_use_Y" name="magic_use" value="Y" checked="checked"|cond="$imageprocess_info->magic_use == 'Y'" />{$lang->magic}</label>
        <br />  * {$lang->msg_magic_use}
         </div>
     </div>
-<div id="magic_conversion">
-    <div class="x_control-group">
+<div class="x_control-group imagic" style="display:none"|cond="$imageprocess_info->magic_use != 'I'">
+        <label class="x_control-label" for="magic_conversion">{$lang->exif_del}</label>
+                <div class="x_controls">
+                <label class="x_inline"><input type="radio"  name="exif_del" value="Y" checked="checked"|cond="$imageprocess_info->exif_del !='N' && $imageprocess_info->exif_del !='S'" />{$lang->onlydel}</label>
+		<label class="x_inline"><input type="radio"  name="exif_del" value="S" <!--@if($imageprocess_info->exif_del =='S')-->checked="checked"<!--@end--> />{$lang->del_save}</label>
+            <label class="x_inline"><input type="radio"  name="exif_del" value="N" <!--@if($imageprocess_info->exif_del == 'N')-->checked="checked"<!--@end--> />{$lang->preserve}</label>
+            <br />      * {$lang->msg_exif_del}
+                </div>
+</div>
+
+    <div class="x_control-group magickpath" style="display:none"|cond="$imageprocess_info->magic_use != 'Y'">
             <label class="x_control-label" for="magic_path">{$lang->magic_path}</label>
 		<div class="x_controls">
 		<input type="text" name="magic_path" value="<!--@if(!$imageprocess_info->magic_path && $magic_path)-->{$magic_path}<!--@else-->{$imageprocess_info->magic_path}<!--@end-->" class="inputTypeText w400" />
@@ -36,30 +46,6 @@
 		</div>
     </div>
 
-<div class="x_control-group">
-	<label class="x_control-label" for="magic_conversion">{$lang->magic_conversion}</label>
-		<div class="x_controls">
-		<label class="x_inline"><input type="radio"  name="magic_conversion" value="N" <!--@if($imageprocess_info->magic_conversion!='Y')-->checked="checked"<!--@end--> />{$lang->notuse}</label>
-            <label class="x_inline"><input type="radio"  name="magic_conversion" value="Y" <!--@if($imageprocess_info->magic_conversion == 'Y')-->checked="checked"<!--@end--> />{$lang->use}</label>
-            <br />	* {$lang->msg_magic_conversion}
-		</div>
-</div>
-<div class="x_control-group"  id="magic_conversion">
-		{@$original = explode('|@|',$imageprocess_info->original_format)}
-	<label class="x_control-label" for="magic_conversion">		{$lang->original_format}</label>
-	<div class="x_controls">
-		<!--@foreach($lang->original_format_type as $key=>$val)--><label class="x_inline"><input type="checkbox" name="original_format" value="{$key}"  <!--@if(in_array($key,$original))-->checked="checked"<!--@end-->>{$val} </label> <!--@end--> 
-		<br />{$lang->about_raw_format}
-		</div></div>
-<div class="x_control-group" id="target_format">
-	 <label class="x_control-label" for="trans_format">	{$lang->trans_format}</label>
-	<div class="x_controls">
-	<!--@foreach($lang->ext_type as $val)-->
-	<label class="x_inline"><input type="radio" name="target_format" value="{$val}" <!--@if($val==$imageprocess_info->target_format)-->checked="checked"<!--@end-->>{$val} </label> 
-	<!--@end-->
-         </div>
-        </div>
-    </div>
 <div class="x_clearfix btnArea">
 		<div class="x_pull-left"></div>
 	<div class="x_pull-right">

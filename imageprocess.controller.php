@@ -25,182 +25,210 @@ class imageprocessController extends imageprocess {
 		}
 		@set_time_limit(0);
 
-                $oModuleModel = &getModel('module');
-                $ipConfig = $oModuleModel->getModuleConfig('imageprocess');
-                $oImageprocessModel = &getModel('imageprocess');
-
-                $target_mid=explode(";",$ipConfig->target_mid);
-                $store_mid=explode(";",$ipConfig->store_mid);
-                $water_mid=explode(";",$ipConfig->water_mid);
-                $logo_mid=explode(";",$ipConfig->logo_mid);
-                if(!$ipConfig->ext) $ipConfig->ext="jpg";
-                if(!$ipConfig->logo_ext) $ipConfig->logo_ext="jpg";
-                $ext_type ="/\.(".implode("|",explode(";",$ipConfig->ext)).")$/i";
-                $logo_ext_type ="/\.(".implode("|",explode(";",$ipConfig->logo_ext)).")$/i";
-
-                $module_info=$oModuleModel->getModuleInfoByModuleSrl($args->module_srl);
-                $file_mid= $module_info->module_srl;
-                $out_file_size = false;
-
+		$oModuleModel = &getModel('module');
+		$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
+		$oImageprocessModel = &getModel('imageprocess');
+		$ipConfig->fileargs = $args;
                 $file=$args->uploaded_filename;
-                $ext = strtolower(substr(strrchr($args->source_filename,'.'),1));
-                
-		//Image Rotate
-                if($file && $ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) ){
-                        $exif = exif_read_data($file);
-		        if($exif['Orientation'] == '6' || $exif['Orientation'] == '3' || $exif['Orientation'] == '8')
-                        {
-                                if($ipConfig->magic_use == 'Y') $oImageprocessModel->MagicRotate($file, $ipConfig->magic_path);
-                		else $oImageprocessModel->GDrotate($file,$ext);
-                        }
-                }
-		//Image Rotate 끝
-		//여기부터 magic_conversion
-		$raw_format = array('arw','raf','orf','crw','cr2','dng','pef','mrw','x3f','nef');
+		$module_info=$oModuleModel->getModuleInfoByModuleSrl($args->module_srl);
+                $file_mid= $module_info->module_srl;
 
-                $or_format = explode('|@|',$ipConfig->original_format);
-                if(in_array('tiff',$or_format)) {
-                        $o_format = array_merge($or_format,array('tif')); //tiff와 tif를 동시에...
-                        $or_format = $o_format;
-                }
-                if(in_array('raw',$or_format)) $original_format = array_merge($or_format,$raw_format);
-                else $original_format = $or_format;
+		$ipConfig->target_mid=explode(";",$ipConfig->target_mid);
+		$ipConfig->store_mid=explode(";",$ipConfig->store_mid);
+		$ipConfig->water_mid=explode(";",$ipConfig->water_mid);
+		$ipConfig->logo_mid=explode(";",$ipConfig->logo_mid);
+		$logo = unserialize($ipConfig->each_logo);
+		if(isset($logo[$file_mid])) $ipConfig->textlogo = $logo[$file_mid];
+		$position = unserialize($ipConfig->each_text_position);
+		if(isset($position[$file_mid])) $ipConfig->logo_position = $position[$file_mid];
+		$fg = unserialize($ipConfig->each_fg);
+		if(isset($fg[$file_mid])) $ipConfig->logo_fg = $fg[$file_mid];
+		$bg = unserialize($ipConfig->each_bg);
+		if(isset($bg[$file_mid])) $ipConfig->logo_bg = $bg[$file_mid];
+		if($ipConfig->each_watermark[$file_mid]) $ipConfig->watermark = $ipConfig->each_watermark[$file_mid];
+		if($ipConfig->each_xmargin[$file_mid]) $ipConfig->xmargin = $ipConfig->each_xmargin[$file_mid];
+		if($ipConfig->each_ymargin[$file_mid]) $ipConfig->ymargin = $ipConfig->each_ymargin[$file_mid];
+		if($ipConfig->each_water_position[$file_mid]) $ipConfig->water_position = $ipConfig->each_water_position[$file_mid];
+		if(!$ipConfig->ext) $ipConfig->ext="jpg";
+		if(!$ipConfig->resize_ext) $ipConfig->resize_ext="jpg";
+		if(!$ipConfig->logo_ext) $ipConfig->logo_ext="jpg";
+		$ipConfig->ext_type ="/\.(".implode("|",explode(";",$ipConfig->ext)).")$/i";
+		$ipConfig->logo_ext_type ="/\.(".implode("|",explode(";",$ipConfig->logo_ext)).")$/i";
+		$ipConfig->resize_type ="/\.(".implode("|",explode(";",$ipConfig->resize_ext)).")$/i";
 
-                if($ipConfig->magic_use == 'Y' && $ipConfig->magic_conversion =='Y' && in_array($ext,$original_format))
-                {
-                        // 화일을 미리 ./files/attache/images 폴더로 이동...
-                        $file = $oImageprocessModel->getConversionName($args,$ipConfig->target_format);
+		$ipConfig->fileargs = $args;
+		$file=$args->uploaded_filename;
 
-                        //이동된 화일이 있으면...
-                        if($file)
-                        {
-                                if($ipConfig->resize_use == 'Y') $tarsize = $ipConfig->resize_width;
-                                else $tarsize = 1024;
-
-                                $target_file = $oImageprocessModel->magicConvert($file,$ipConfig->magic_path,$ipConfig->target_format,$ext,$tarsize);
-                                if(file_exists($target_file))
-                                {
-                                        $file = str_ireplace($_SERVER[DOCUMENT_ROOT],'./',$target_file);
-                                }
-                                $args->uploaded_filename=$file;
-                                $args->file_srl=$args->file_srl;
-                                $args->direct_download = 'Y';
-                                $output=executeQuery('imageprocess.renameFileName', $args);
-                        }
-                }
-		//mgaic_conversion 
-		//여기부터 리사이즈
-		list($width, $height,$type)=getimagesize($file);
-		if($ipConfig->resize_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) &&  (!$ipConfig->target_mid || in_array($file_mid,$target_mid))) 
-		{	
-			if(!$type || $type>3) return; //1:GIF, 2:JPG, 3:PNG
-			$target_size = $ipConfig->resize_width;
-
-			$quality = $ipConfig->resize_quality;
-			
-			if($ipConfig->target_width == 'N' && $width>$target_size) 
-			{
-				$new_width = $target_size;
-				$new_height=round($height*$target_size/$width);
-
-				if($ipConfig->original_store=='Y' && (!$ipConfig->store_mid || in_array($file_mid,$store_mid))) 
-				{
-					$ofile=$oImageprocessModel->getOfile($file,$ipConfig->store_path);
-					if(!file_exists($ofile)) FileHandler::copyFile($file,$ofile); //@copy($file,$ofile);
-				}
-				if($ipConfig->magic_use == 'Y') $oImageprocessModel->magicResize($file, $new_width, $new_height, $ipConfig);
-				else $oImageprocessModel->createImageFile($file, $new_width, $new_height, $ipConfig);
-			} 
-			elseif ($ipConfig->target_width == 'Y' && ($width>$target_size || $height>$target_size)) 
-			{
-				if($width>$height) 
-				{
-					$new_width = $target_size;
-					$new_height=round($height*$target_size/$width);
-				} 
-				else 
-				{
-					$new_height = $target_size;
-					$new_width = round($width*$target_size/$height);
-				}
-				$quality = $ipConfig->resize_quality;
-				if($ipConfig->original_store=='Y' && (!$ipConfig->store_mid || in_array($file_mid,$store_mid))) 
-				{
-					$ofile=$oImageprocessModel->getOfile($file,$ipConfig->store_path);
-					if(!file_exists($ofile)) FileHandler::copyFile($file,$ofile); //@copy($file,$ofile);
-				}
-				if($ipConfig->magic_use == 'Y') $oImageprocessModel->magicResize($file, $new_width, $new_height, $ipConfig);
-				else $oImageprocessModel->createImageFile($file, $new_width, $new_height, $ipConfig);
-			} 
-		}
-
-		//여기부터 워터마크
-		if($ipConfig->watermark_use == 'Y' && preg_match($ext_type, $file) &&  (!$ipConfig->water_mid ||in_array($file_mid,$water_mid))) 
-		{
-			if($ipConfig->each_watermark[$file_mid]) $ipConfig->watermark = $ipConfig->each_watermark[$file_mid];
-			if($ipConfig->each_xmargin[$file_mid]) $ipConfig->xmargin = $ipConfig->each_xmargin[$file_mid];
-if($ipConfig->each_ymargin[$file_mid]) $ipConfig->ymargin = $ipConfig->each_ymargin[$file_mid];
-if($ipConfig->each_water_position[$file_mid]) $ipConfig->water_position = $ipConfig->each_water_position[$file_mid];
-
-			list($width, $height,$type)=getimagesize($file);
-			if(!$type || $type > 3) return; //1:GIF, 2:JPG, 3:PNG
-			if($ipConfig->minimum_width > $height || $ipConfig->minimum_width > $width) return;
-			if($ipConfig->original_store == 'Y' && (!$ipConfig->store_mid || in_array($file_mid,$store_mid))) 
-			{
-				$ofile=$oImageprocessModel->getOfile($file,$ipConfig->store_path);
-				if(!file_exists($ofile)) FileHandler::copyFile($file,$ofile); //@copy($file,$ofile);
-			}
-//			if(isset($ipConfig->each_water_position[$file_mid])) $ipConfig->watermark_position = $ipConfig->each_water_position[$file_mid];
-			if($ipConfig->magic_use == 'Y') $oImageprocessModel->magicWatermark($file,$ipConfig);
-			else $oImageprocessModel->alphaWatermark($file,$ipConfig);
-		}
-
-        //여기부터 텍스트로고
-        $logo_mid=explode(";",$ipConfig->logo_mid);
-        if(!$ipConfig->logo_ext) $ipConfig->logo_ext="jpg";
-        $logo_ext_type ="/\.(".implode("|",explode(";",$ipConfig->logo_ext)).")$/i";
-
-        if($ipConfig->textlogo_use == 'Y' && preg_match($logo_ext_type, $file) &&  (!$ipConfig->logo_mid || in_array($file_mid,$logo_mid)))
-        {
-
-            $logo = unserialize($ipConfig->each_logo);
-            if(isset($logo[$file_mid])) $ipConfig->textlogo = $logo[$file_mid];
-            $position = unserialize($ipConfig->each_text_position);
-            if(isset($position[$file_mid])) $ipConfig->logo_position = $position[$file_mid];
-            $fg = unserialize($ipConfig->each_fg);
-            if(isset($fg[$file_mid])) $ipConfig->logo_fg = $fg[$file_mid];
-            $bg = unserialize($ipConfig->each_bg);
-            if(isset($bg[$file_mid])) $ipConfig->logo_bg = $bg[$file_mid];
-            list($width, $height,$type)=getimagesize($file);
-            if(!$type || $type > 3) return; //1:GIF, 2:JPG, 3:PNG
-            if($ipConfig->logo_minimum_width && ($ipConfig->logo_minimum_width > $height || $ipConfig->logo_minimum_width > $width)) return;
-
-            if($ipConfig->original_store == 'Y' && (!$ipConfig->store_mid || in_array($file_mid,$store_mid)))
-            {
-                $ofile=$oImageprocessModel->getOfile($file,$ipConfig->store_path);
-                if(!file_exists($ofile)) FileHandler::copyFile($file,$ofile); //@copy($file,$ofile);
-            }
-            if($ipConfig->magic_use == 'Y') $oImageprocessModel->magicTextLogo($file,$ipConfig);
-            else $oImageprocessModel->alphaTextLogo($file,$ipConfig);
-        }
-
-
-		//화일사이즈
+		if($ipConfig->magic_use == 'Y') $this->MagicProcess($file, $ipConfig);
+		elseif($ipConfig->magic_use == 'I') $this->ImagickProcess($file,$ipConfig);
+		else $this->GDProcess($file,$ipConfig);	
+		
 		if(preg_match("/\.(jpg|jpeg|gif|png)$/i", $file) && ($ipConfig->watermark_use == 'Y' || $ipConfig->resize_use == 'Y' || $ipConfig->textlogo_use == 'Y')) 
 		{
-			$obj = new stdclass;
-			$obj->file_srl = $args->file_srl;
-			$obj->file_size = filesize($file);
-			$output = executeQuery('imageprocess.updateFileSize', $obj);
+			$this->updatefileszie($file,$args->file_srl);
 		}
 		return;
-	} //functiontriggerImsert
+	}
+	
+	
+	function MagicProcess($file, $ipConfig)
+	{
+		if($ipConfig->magic_use != 'Y') return;
+		$oModuleModel = &getModel('module');
+              	$module_info=$oModuleModel->getModuleInfoByModuleSrl($ipConfig->fileargs->module_srl);
+                $file_mid= $module_info->module_srl;
+		$oImageprocessModel = &getModel('imageprocess');
+		list($original_width, $original_height, $orginal_type) = getimagesize($file);
 
+		if($file && $ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) )
+                {
+                        $exif = @exif_read_data($file);
+                        if($exif['Orientation'] == '6' || $exif['Orientation'] == '3' || $exif['Orientation'] == '8')
+                        {
+				$oImageprocessModel->magicRotate($file, $ipConfig->magic_path);
+                        }
+                }
+
+		if($ipConfig->original_store=='Y' && in_array($file_mid,$ipConfig->store_mid))
+                {
+                        $ofile=$oImageprocessModel->getOfile($file,$ipConfig->store_path);
+                        if(!file_exists($ofile)) FileHandler::copyFile($file,$ofile);
+                }
+	
+		if($ipConfig->resize_use == 'Y' && preg_match($ipConfig->resize_type, $file) &&  in_array($file_mid,$ipConfig->target_mid) && ($original_width > $ipConfig->resize_width || $original_height > $ipConfig->resize_width  ))
+                {
+                        if($oImageprocessModel->checkGroup($ipConfig->noresizegroup))
+                        {
+                                $newSize = $this->getNewsize($file, $ipConfig);
+                                if($newSize) $oImageprocessModel->magicResize($file, $newSize->width, $newSize->height, $ipConfig);
+                        }
+                }
+                //여기부터 워터마크
+		if($ipConfig->watermark_use == 'Y' && preg_match($ipConfig->ext_type, $file) &&  in_array($file_mid,$ipConfig->water_mid) && $original_width > $ipConfig->minimum_width && $original_height > $ipConfig->minimum_width )
+                {
+                        if($oImageprocessModel->checkGroup($ipConfig->nowatergroup))
+                        {
+                                $oImageprocessModel->magicWatermark($file,$ipConfig);
+                        }
+                }
+                //여기부터 텍스트로고
+		if($ipConfig->textlogo_use == 'Y' && preg_match($ipConfig->logo_ext_type, $file) &&  in_array($file_mid,$ipConfig->logo_mid) && $original_width > $ipConfig->logo_minimum_width && $original_height > $ipConfig->logo_minimum_width )
+                {
+                        if($oImageprocessModel->checkGroup($ipConfig->nologogroup))
+                        {
+                                $oImageprocessModel->magicTextLogo($file,$ipConfig);
+                        }
+                }
+	} //function MagicProcess
+
+	function ImagickProcess($file, $ipConfig)
+	{
+		if($ipConfig->magic_use != 'I') return;
+                $oModuleModel = &getModel('module');
+                $module_info=$oModuleModel->getModuleInfoByModuleSrl($ipConfig->fileargs->module_srl);
+                $file_mid= $module_info->module_srl;
+		$oImageprocessModel = &getModel('imageprocess');
+		$oImageprocessModel->imagickdo($file, $ipConfig);
+        } //function ImagickProcess
+
+
+	function getNewsize($file, $ipConfig)
+	{
+		list($width, $height,$type)=getimagesize($file);
+		if(!$type || $type>3) return; //1:GIF, 2:JPG, 3:PNG
+		$target_size = $ipConfig->resize_width;
+		if($height <= $ipConfig->minimum_width || $width <= $ipConfig->minimum_width) return false;
+		if($height <= $target_size && $width <= $target_size) return false;
+		$obj = new stdClass;
+		if($ipConfig->target_width == 'N' && $width>$target_size)
+		{
+			$obj->width = $target_size;
+			$obj->height = round($height*$target_size/$width);
+		}
+		elseif ($ipConfig->target_width == 'Y' && ($width>$target_size || $height>$target_size))
+		{
+			if($width>$height)
+			{
+				$obj->width = $target_size;
+				$obj->height = round($height*$target_size/$width);
+			}
+			else
+			{
+				$obj->height = $target_size;
+				$obj->width = round($width*$target_size/$height);
+			}
+		}
+		return $obj;
+	}
+
+	function GDProcess($file, $ipConfig)
+	{
+		if($ipConfig->magic_use == 'I' || $ipConfig->magic_use == 'Y') return;
+                $oModuleModel = &getModel('module');
+                $module_info=$oModuleModel->getModuleInfoByModuleSrl($ipConfig->fileargs->module_srl);
+                $file_mid= $module_info->module_srl;
+		$oImageprocessModel = &getModel('imageprocess');
+		list($original_width, $original_height, $orginal_type) = getimagesize($file);
+
+//		$oImageprocessModel->GDdo($file,$ipConfig);
+		
+		if($file && $ipConfig->rotate_use == 'Y' && preg_match('/\.(jpg|jpeg|gif|png)$/i', $file) )
+                {
+                        $exif = @exif_read_data($file);
+                        if($exif['Orientation'] == '6' || $exif['Orientation'] == '3' || $exif['Orientation'] == '8')
+                        {
+                                $oImageprocessModel->GDrotate($file);
+                        }
+                }
+                if($ipConfig->original_store == 'Y' && in_array($file_mid,$ipConfig->store_mid))
+		{
+                        $ofile=$oImageprocessModel->getOfile($file,$ipConfig->store_path);
+                        if(!file_exists($ofile)) FileHandler::copyFile($file,$ofile); //@copy($file,$ofile);
+                }
+		//여기부터 리사이즈
+                if($ipConfig->resize_use == 'Y' && preg_match($ipConfig->resize_type, $file) &&  in_array($file_mid,$ipConfig->target_mid) && ($original_width > $ipConfig->resize_width || $original_height > $ipConfig->resize_width  ))
+                {
+                        if($oImageprocessModel->checkGroup($ipConfig->noresizegroup))
+                        {
+                                $newSize = $this->getNewsize($file, $ipConfig);
+                                if($newSize) $oImageprocessModel->GDResize($file, $newSize->width, $newSize->height, $ipConfig);
+                        }
+                }
+                //여기부터 워터마크
+                if($ipConfig->watermark_use == 'Y' && preg_match($ipConfig->ext_type, $file) &&  in_array($file_mid,$ipConfig->water_mid) && $original_width > $ipConfig->minimum_width && $original_height > $ipConfig->minimum_width )
+                {
+                        if($oImageprocessModel->checkGroup($ipConfig->nowatergroup))
+                        {
+                                $oImageprocessModel->GDWatermark($file,$ipConfig);
+                        }
+                }
+                //여기부터 텍스트로고
+                if($ipConfig->textlogo_use == 'Y' && preg_match($ipConfig->logo_ext_type, $file) &&  in_array($file_mid,$ipConfig->logo_mid) && $original_width > $ipConfig->logo_minimum_width && $original_height > $ipConfig->logo_minimum_width )
+                {
+                        if($oImageprocessModel->checkGroup($ipConfig->nologogroup))
+                        {
+                                $oImageprocessModel->GDTextLogo($file,$ipConfig);
+                        }
+                }
+        } //function GDProcess
+
+	function updatefileszie($file,$file_srl)
+	{
+		$args = new stdclass;
+		$args->file_srl = $file_srl;
+		$args->file_size = filesize($file);
+		$output = executeQuery('imageprocess.updateFileSize', $args);
+	}
+	
 
 	function triggerDeleteFile(&$args) 
 	{
 		$oImageprocessModel = &getModel('imageprocess');
 		$file = $args->uploaded_filename;
+		$obj = new stdClass;
+		$obj->file_srl = $args->file_srl;
+		$oImageprocessModel->deleteEXIF($obj);
+
 		$oModuleModel = &getModel('module');
 		$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
 
@@ -223,9 +251,7 @@ if($ipConfig->each_water_position[$file_mid]) $ipConfig->water_position = $ipCon
 	function triggerMoveDocument(&$args)
 	{
 		if(!$args->document_srls) return;
-
-        $GLOBALS['IMAGEPROCESSING']= 'true';
-
+	        $GLOBALS['IMAGEPROCESSING']= 'true';
 		$oImageprocessModel = &getModel('imageprocess');
 		$oModuleModel = &getModel('module');
 		$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
@@ -236,7 +262,6 @@ if($ipConfig->each_water_position[$file_mid]) $ipConfig->water_position = $ipCon
 			$document_srl = $document_srl_list[$i];
 			$oDocument = $oDocumentModel->getDocument($document_srl);
 			if(!$oDocument->isExists()) continue;
-
 			unset($obj);
 			$obj = $oDocument->getObjectVars();
 			if($module_srl != $obj->module_srl && $oDocument->hasUploadedFiles()) {
@@ -265,6 +290,11 @@ if($ipConfig->each_water_position[$file_mid]) $ipConfig->water_position = $ipCon
 		$oImageprocessModel = &getModel('imageprocess');
 		$oModuleModel = &getModel('module');
 		$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
+
+		$obj = new stdClass;
+                $obj->target_srl = $args->document_srl;
+                $oImageprocessModel->deleteEXIF($obj);
+
 		if($ipConfig->original_store != 'Y') return;
 		$output = $oImageprocessModel->deleteOFiles($args->document_srl,$ipConfig->store_path);
 		return $output;
@@ -275,6 +305,11 @@ if($ipConfig->each_water_position[$file_mid]) $ipConfig->water_position = $ipCon
 		$oImageprocessModel = &getModel('imageprocess');
 		$oModuleModel = &getModel('module');
 		$ipConfig = $oModuleModel->getModuleConfig('imageprocess');
+
+		$obj = new stdClass;
+                $obj->target_srl = $args->comment_srl;
+                $oImageprocessModel->deleteEXIF($obj);
+
 		if($ipConfig->original_store != 'Y') return;
 		$output = $oImageprocessModel->deleteOFiles($args->comment_srl,$ipConfig->store_path);
 		return $output;
@@ -302,25 +337,26 @@ if($ipConfig->each_water_position[$file_mid]) $ipConfig->water_position = $ipCon
 
 				//2014년 1월 3일 원본파일 다운로드 안되는 문제  소스 삽입 시작
 				$filename = $file_obj->source_filename;
-	            if(!file_exists($ofile)) return $this->stop('msg_file_not_found');
-    	        $fp = fopen($ofile, 'rb');
-        	    if(!$fp) return $this->stop('msg_file_not_found');
-            	header("Cache-Control: "); 
-	            header("Pragma: "); 
-    	        header("Content-Type: application/octet-stream"); 
-        	    header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-            	header("Content-Length: " .(string)($file_obj->file_size)); 
-	            header('Content-Disposition: attachment; filename="'.$filename.'"'); 
-    	        header("Content-Transfer-Encoding: binary\n");
-			   // if file size is lager than 10MB, use fread function (#18675748)
-				if (filesize($ofile) > 1024 * 1024) {
-				    while(!feof($fp)) echo fread($fp, 1024);
-				    fclose($fp);
-				} else {
+	            		if(!file_exists($ofile)) return $this->stop('msg_file_not_found');
+    	        		$fp = fopen($ofile, 'rb');
+        	    		if(!$fp) return $this->stop('msg_file_not_found');
+            			header("Cache-Control: "); 
+	            		header("Pragma: "); 
+    	        		header("Content-Type: application/octet-stream"); 
+        	    		header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+            			header("Content-Length: " .(string)($file_obj->file_size)); 
+	            		header('Content-Disposition: attachment; filename="'.$filename.'"'); 
+    	        		header("Content-Transfer-Encoding: binary\n");
+			   	// if file size is lager than 10MB, use fread function (#18675748)
+				if (filesize($ofile) > 1024 * 1024) 
+				{
+				    	while(!feof($fp)) echo fread($fp, 1024);
+				    	fclose($fp);
+				} 
+				else 
+				{
 				    fpassthru($fp); 
-				}
-			   //2014년 1월 3일 원본파일 다운로드 안되는 문제 소스삽입 끝
-
+				}//2014년 1월 3일 원본파일 다운로드 안되는 문제 소스삽입 끝
 			}
 		}
 		elseif($oImageprocessModel->checkConvertedFile($file_obj))

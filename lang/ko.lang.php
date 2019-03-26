@@ -4,6 +4,13 @@
  * @author karma (http://www.wildgreen.co.kr)
  * @brief  imageprocess 모듈의 기본 언어
  **/
+
+$lang->exif_del = '메타데이터 삭제';
+$lang->onlydel = '삭제';
+$lang->del_save = '삭제 및 DB 저장';
+$lang->preserve = '사진에 보존';
+$lang->msg_exif_del= 'imagick 프로세싱에서 메타데이터인 EXIF를 제거하면 화일용량이 많이 감소합니다. 저장된 EXIF는 PHP_EXIF 애드온(version 1.6이상)을 설치하면 볼 수 있습니다.';
+
 $lang->imagick = 'imagick 사용';
 $lang->msg_imagick = 'php에 imagick extension이 설치된 경우에만 사용가능합니다.';
 $lang->msg_logo_point = '폰트 크기를 입력하십시요.';
@@ -18,6 +25,8 @@ $lang->mgaic_installed ="에 imageMagick이 설치되어있습니다.";
 $lang->cmd_no_original_store = '원본저장 기능이 설정되어 있지 않습니다.';
 $lang->cmd_no_watermark = '워터마크 사용기능이 설정되어 있지 않습니다.';
 $lang->cmd_no_textlogo = '텍스트로고 사용기능이 설정되어 있지 않습니다.';
+$lang->msg_resize_type = '축소대상 이미지 확장자';
+$lang->about_resize_type ='가급적 gif는 리사이즈하지 않는 것이 좋습니다.';
 
 //$lang->change_kfile ='한글및특수문자화일이름변경';
 $lang->Resize_use = "이미지 축소 사용";
@@ -54,7 +63,7 @@ $lang->original_format = "원본포맷";
 $lang->trans_format = "변환포맷";
 	
 $lang->watermark_type = array(	'RB' => '우측하단',	'RT' => '우측상단',	'LT' => '좌측상단',	'LB' => '좌측하단',	'SE' => '우측중하단',	'NE' => '우측중상단',	'NW' =>'좌측중상단',	'SW' => '좌측중하단',	'CE' => '정중앙',);
-$lang->original_format_type = array(	'bmp' => 'BMP',	'tiff' => 'TIFF','tga' => 'TGA', 'psd' => 'PSD', 'raw' => 'RAW포맷 지원',);
+$lang->original_format_type = array(	'bmp' => 'BMP',	'tiff' => 'TIFF','tga' => 'TGA', 'psd' => 'PSD', 'raw' => 'RAW포맷 지원', 'png'=>'PNG');
 $lang->about_raw_format = "PSD의 경우 포토샵 CS5에서는 compatibility를 최대로해서 저장하지 않으면 일부 서버에서는 깨질수 있습니다.";
 $lang->ext_type = array('jpg','jpeg','png'); 
 $lang->abount_target_watermark ="  (gif 포맷은 지원하지 않습니다.)";
@@ -72,7 +81,7 @@ $lang->input_magic_path = 'ImageMagick path를 입력하십시요.';
 $lang->check_magic_path = 'ImageMagick 실행화일이 확인되지 않습니다.';
 $lang->magic_conversion = "이미지 포맷 변환";
 $lang->msg_magic_conversion="ImageMagick을 사용하는 경우에만 지원합니다. imagemagick을 선택하는 경우 bmp, tiff 등의 화일을 선택된 포맷으로 변환시켜 저장해주는 기능입니다.";
-$lang->msg_magic_use ='ImageMagick이 설치된 경우에만 변경하십시요.';
+$lang->msg_magic_use ='PHP extension인 imagick 사용을 권장합니다. ImageMagick은 외부실행화일이  설치된 경우에만 선택하십시요.';
 $lang->msg_magic_path ='ImageMagick 실행화일이 있는 폴더를 입력하십시요. ex) /usr/local/bin/ (* path가 설정되어있는 경우에는 입력하지 않으셔도 됩니다.)';
 $lang->msg_down_group = '체크하지않으면 본인만 원본다운로드가 가능합니다. 다른그룹에게는 조작된 사진이 다운로드됩니다.';
 $lang->checkfolder ='저장폴더를 다시 확인해보시기 바랍니다.';

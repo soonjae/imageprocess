@@ -34,6 +34,7 @@ class imageprocessAdminView extends imageprocess
 		$target_mid=explode(";",$imageprocess_info->target_mid);
 		$imageprocess_info->target_mid=$target_mid;
 		$imageprocess_info->noresizegroup=explode(";",$imageprocess_info->noresizegroup);
+		$imageprocess_info->resize_ext = explode(";",$imageprocess_info->resize_ext);
 		Context::set("imageprocess_info",$imageprocess_info);
 
 		// mid 목록을 가져옴
@@ -68,109 +69,107 @@ class imageprocessAdminView extends imageprocess
 		$this->setTemplateFile('adminindex');
 	}
 
-    /**
-     * @brief 워터마크 관리 페이지 보여줌
-     **/
-    function dispImageprocessAdminWatermark() 
-    {
+    	/**
+     	* @brief 워터마크 관리 페이지 보여줌
+     	**/
+    	function dispImageprocessAdminWatermark() 
+    	{
 
-        $oModuleModel = &getModel('module');
-        $imageprocess_info=$this->imageprocess_info;
+        	$oModuleModel = &getModel('module');
+        	$imageprocess_info=$this->imageprocess_info;
 
-        $water_mid=explode(";",$imageprocess_info->water_mid);
-        $imageprocess_info->water_mid=$water_mid;
+        	$water_mid=explode(";",$imageprocess_info->water_mid);
+        	$imageprocess_info->water_mid=$water_mid;
 		$imageprocess_info->ext = explode(";",$imageprocess_info->ext);
 		$imageprocess_info->nowatergroup=explode(";",$imageprocess_info->nowatergroup);
 		Context::set("each_watermark",$imageprocess_info->each_watermark);
 		Context::set("xmargin",$imageprocess_info->xmargin);
 		Context::set("ymargin",$imageprocess_info->ymargin);
 		Context::set("each_position",$imageprocess_info->each_water_position);
-        Context::set("imageprocess_info",$imageprocess_info);
+        	Context::set("imageprocess_info",$imageprocess_info);
 
-        // mid 목록을 가져옴
+        	// mid 목록을 가져옴
 		$oImageprocessModel = &getModel('imageprocess');
 		$mid_list = $oImageprocessModel->getMidList($args);
 
-        // module_category와 module의 조합
-        if(!$site_module_info->site_srl) 
+        	// module_category와 module의 조합
+        	if(!$site_module_info->site_srl) 
 		{
-            // 모듈 카테고리 목록을 구함
-            $module_categories = $oModuleModel->getModuleCategories();
+            		// 모듈 카테고리 목록을 구함
+            		$module_categories = $oModuleModel->getModuleCategories();
 
-            if($mid_list) 
+            		if($mid_list) 
 			{
-                foreach($mid_list as $module_srl => $module) 
+                		foreach($mid_list as $module_srl => $module) 
 				{
-                    $module_categories[$module->module_category_srl]->list[$module_srl] = $module;
-                }
-            }
-        } 
+                    			$module_categories[$module->module_category_srl]->list[$module_srl] = $module;
+                		}
+            		}
+        	} 
 		else 
 		{
-            $module_categories[0]->list = $mid_list;
-        }
-	
-	$stampList = $oImageprocessModel->getStampList();	
-	Context::set('stampList',$stampList);
-	Context::set('mid_list',$module_categories);
-	Context::set('group_list', $this->group_list);
+            		$module_categories[0]->list = $mid_list;
+        	}
+		$stampList = $oImageprocessModel->getStampList();	
+		Context::set('stampList',$stampList);
+		Context::set('mid_list',$module_categories);
+		Context::set('group_list', $this->group_list);
 
-	// 템플릿 파일 지정
-	$this->setTemplateFile('watermark_setup');
-    }
+		// 템플릿 파일 지정
+		$this->setTemplateFile('watermark_setup');
+    	}
 	
-    /**
-    * @brief 워터마크 관리 페이지 보여줌
-    **/
-    function dispImageprocessAdminOfile() 
+    	/**
+    	* @brief 워터마크 관리 페이지 보여줌
+    	**/
+    	function dispImageprocessAdminOfile() 
 	{
-        $oModuleModel = &getModel('module');
+        	$oModuleModel = &getModel('module');
 		$imageprocess_info=$this->imageprocess_info;
 
-        $store_mid=explode(";",$imageprocess_info->store_mid);
-        $imageprocess_info->store_mid=$store_mid;
-        $imageprocess_info->down_group=explode(";",$imageprocess_info->down_group);
+	        $store_mid=explode(";",$imageprocess_info->store_mid);
+        	$imageprocess_info->store_mid=$store_mid;
+	        $imageprocess_info->down_group=explode(";",$imageprocess_info->down_group);
 		Context::set("imageprocess_info",$imageprocess_info);
 
-		//$oMemberModel = &getModel('member');
-        //$group_list = $oMemberModel->getGroups();
-        Context::set('group_list', $this->group_list);
+        	Context::set('group_list', $this->group_list);
 
-        // mid 목록을 가져옴
+        	// mid 목록을 가져옴
 		$oImageprocessModel = &getModel('imageprocess');
 		$mid_list = $oImageprocessModel->getMidList($args);
 
-        // module_category와 module의 조합
-        if(!$site_module_info->site_srl) 
+        	// module_category와 module의 조합
+        	if(!$site_module_info->site_srl) 
 		{
-            // 모듈 카테고리 목록을 구함
-            $module_categories = $oModuleModel->getModuleCategories();
+            		// 모듈 카테고리 목록을 구함
+            		$module_categories = $oModuleModel->getModuleCategories();
 
-            if($mid_list) 
+            		if($mid_list) 
 			{
-                foreach($mid_list as $module_srl => $module) 
+                		foreach($mid_list as $module_srl => $module) 
 				{
-                    $module_categories[$module->module_category_srl]->list[$module_srl] = $module;
-                }
-            }
-        } 
+                    			$module_categories[$module->module_category_srl]->list[$module_srl] = $module;
+                		}
+            		}
+        	} 
 		else 
 		{
-            $module_categories[0]->list = $mid_list;
-        }
+            		$module_categories[0]->list = $mid_list;
+        	}
 
-        Context::set('mid_list',$module_categories);
+        	Context::set('mid_list',$module_categories);
 
-        // 템플릿 파일 지정
-        $this->setTemplateFile('ofile_setup');
-    }
+        	// 템플릿 파일 지정
+        	$this->setTemplateFile('ofile_setup');
+    	}
 
-    /**
-    * @brief 워터마크 관리 페이지 보여줌
-    **/
-    function dispImageprocessAdminEtc() 
+    	/**
+    	* @brief 워터마크 관리 페이지 보여줌
+    	**/
+    	function dispImageprocessAdminEtc() 
 	{
 		Context::set('EXIF', extension_loaded('exif') ? 1 : 0);
+		Context::set('IMAGICK', extension_loaded('imagick') ? 1 : 0);
 
 		$oModuleModel = &getModel('module');
 	        $imageprocess_info=$oModuleModel->getModuleConfig('imageprocess');
@@ -179,9 +178,9 @@ class imageprocessAdminView extends imageprocess
 		Context::set('imageprocess_info',$imageprocess_info);
 		Context::set('magic_path',$this->checkMagicPath());
 
-        // 템플릿 파일 지정
-        $this->setTemplateFile('etc_setup');
-    }
+        	// 템플릿 파일 지정
+       	 	$this->setTemplateFile('etc_setup');
+    	}
 
 	/**
 	* 이미지매직 프로그램 위치 확인
@@ -242,59 +241,59 @@ class imageprocessAdminView extends imageprocess
 		Context::set('mid_list',$module_categories);
 		Context::set('group_list', $this->group_list);
 
-        $this->setTemplatePath($this->module_path.'tpl');
-        $this->setTemplateFile('textlogo');
-    }
+	        $this->setTemplatePath($this->module_path.'tpl');
+        	$this->setTemplateFile('textlogo');
+    	}
 
 	function getOutFont()
-    {
-        require_once(_XE_PATH_.'modules/imageprocess/ttfinfo.class.php');
-        $txt = fileHandler::readDir('./modules/imageprocess/font');
-        $arr=array();
-        foreach ($txt as $key)
-        {
-            $fontinfo = getFontInfo('modules/imageprocess/font/'.$key);
-            $fname = $fontinfo[18] ? detectUTF8($fontinfo[18],true):detectUTF8($fontinfo[4],true);
-            if(!$fname) continue;
-            $dir = _XE_PATH_.'modules/imageprocess/font/'.$key;
-            $this->makeTextPng($dir);
-            $arr[$fname] = $dir;
-        }
-        ksort($arr);
-        return $arr;
-    }
+    	{
+        	require_once(_XE_PATH_.'modules/imageprocess/ttfinfo.class.php');
+	        $txt = fileHandler::readDir('./modules/imageprocess/font');
+        	$arr=array();
+	        foreach ($txt as $key)
+        	{
+	            $fontinfo = getFontInfo('modules/imageprocess/font/'.$key);
+        	    $fname = $fontinfo[18] ? detectUTF8($fontinfo[18],true):detectUTF8($fontinfo[4],true);
+	            if(!$fname) continue;
+        	    $dir = _XE_PATH_.'modules/imageprocess/font/'.$key;
+	            $this->makeTextPng($dir);
+        	    $arr[$fname] = $dir;
+        	}
+        	ksort($arr);
+        	return $arr;
+    	}
 
-    function makeTextPng($font)
-    {
-        $info = pathinfo($font);
-        $fn =  basename($font,'.'.$info['extension']);
+    	function makeTextPng($font)
+    	{
+        	$info = pathinfo($font);
+	        $fn =  basename($font,'.'.$info['extension']);
 
-        $path = './files/cache/imageprocess';
-        if(!is_dir($path)) FileHandler::makeDir($path);
-        $file = sprintf('%s/%s.png',$path,$fn);
-        if(file_exists($file)) return;
-        $fontsize = 15;
-        $text = "한Aa國";
-        $width = 65;
-        $oImageprocessModel = &getModel('imageprocess');
-        $tbox = $oImageprocessModel->calculateTextBox($text,$font,$fontsize,0);
-        $height = 25;
+        	$path = './files/cache/imageprocess';
+	        if(!is_dir($path)) FileHandler::makeDir($path);
+        	$file = sprintf('%s/%s.png',$path,$fn);
+	        if(file_exists($file)) return;
+        	$fontsize = 15;
+	        $text = "한Aa國";
+        	$width = 65;
+	        $oImageprocessModel = &getModel('imageprocess');
+        	$tbox = $oImageprocessModel->calculateTextBox($text,$font,$fontsize,0);
+	        $height = 25;
 
-        $image = imagecreatetruecolor($width,$height);
+        	$image = imagecreatetruecolor($width,$height);
 
-        $bgcolor = imagecolorallocate($image, 240, 240, 240);
-        $fontcolor = imagecolorallocate($image, 0, 0, 0);
+        	$bgcolor = imagecolorallocate($image, 240, 240, 240);
+        	$fontcolor = imagecolorallocate($image, 0, 0, 0);
 
-         imagefilledrectangle($image, 0, 0, $width, $height, $bgcolor);
+         	imagefilledrectangle($image, 0, 0, $width, $height, $bgcolor);
 
-        $x = ($width - $tbox["width"])/2 ;
-        $y = $fontsize + ($height -$tbox["height"])/2+1;
+        	$x = ($width - $tbox["width"])/2 ;
+        	$y = $fontsize + ($height -$tbox["height"])/2+1;
         
-        imagefttext($image, $fontsize, 0, $x, $y, $fontcolor, $font, $text);
-        imagepng($image,$file);
+        	imagefttext($image, $fontsize, 0, $x, $y, $fontcolor, $font, $text);
+        	imagepng($image,$file);
 
-        imagedestroy($image);
-    }
+        	imagedestroy($image);
+    	}
 
 
 }

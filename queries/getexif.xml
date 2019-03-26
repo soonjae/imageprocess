@@ -1,0 +1,12 @@
+<query id="getexif" action="select">
+    <tables>
+        <table name="imageexif" />
+    </tables>
+    <columns>
+        <column name="*" />
+    </columns>
+    <conditions>
+	<condition operation="equal" column="file_srl" var="file_srl" filter="number" />
+        <condition operation="equal" column="target_srl" var="target_srl" filter="number" pipe="and" />
+    </conditions>
+</query>

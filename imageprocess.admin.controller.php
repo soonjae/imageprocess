@@ -27,6 +27,7 @@ class imageprocessAdminController extends imageprocess
 		$ipConfig->resize_quality = Context::get('resize_quality');
 		if($ipConfig->resize_quality >100) $ipConfig->resize_quality = 100;
 		elseif(!$ipConfig->resize_quality) $ipConfig->resize_quality = 80;
+		$ipConfig->resize_ext = str_replace('|@|',';',trim(Context::get('resize_ext')));
 		$ipConfig->noresizegroup = str_replace('|@|',';',trim(Context::get('noresizegroup')));
 		if($ipConfig->resize_use != 'Y' && $ipConfig->watermark_use != 'Y') $ipConfig->original_store = 'N';       
  
@@ -49,8 +50,6 @@ class imageprocessAdminController extends imageprocess
 		if($ipConfig->xmargin == '') $ipConfig->xmargin = 10;
 		$ipConfig->ymargin = Context::get('ymargin');
 		if($ipConfig->ymargin == '') $ipConfig->ymargin = 10;
-		$ipConfig->water_quality = Context::get('water_quality');
-		if(!$ipConfig->water_quality || $ipConfig->water_quality > 100) $ipConfig->water_quality = 100;
 		$ipConfig->water_position = Context::get('water_position');
 		$ipConfig->ext = str_replace('|@|',';',trim(Context::get('ext')));
 		$ipConfig->nowatergroup = str_replace('|@|',';',trim(Context::get('nowatergroup')));
@@ -118,6 +117,15 @@ class imageprocessAdminController extends imageprocess
                         if (class_exists('BaseObject')) return new BaseObject(-1, 'ip_safe_mode');
                         else return new Object(-1, 'ip_safe_mode');
                 }
+		elseif($ipConfig->magic_use == 'I' )
+		{
+			$ipConfig->exif_del = Context::get('exif_del');
+			$ipConfig->magic_conversion = Context::get('magic_conversion');
+                        $ipConfig->original_format = Context::get('original_format');
+                        $ipConfig->target_format = Context::get('target_format');
+                        if(!$ipConfig->target_format) $ipConfig->target_format = 'jpg';
+
+		}
 		elseif($ipConfig->magic_use == 'Y' ) 
 		{
 			if($ipConfig->magic_path && !preg_match('/\/$/',$ipConfig->magic_path)) $ipConfig->magic_path .= '/';
@@ -163,11 +171,9 @@ class imageprocessAdminController extends imageprocess
 
 	        $ipConfig->logo_minimum_width = Context::get('logo_minimum_width');
         	$ipConfig->textlogo = Context::get('textlogo');
-	        $ipConfig->logo_quality = Context::get('logo_quality');
         	$ipConfig->exfont = Context::get('logo_font_type');
 	        $ipConfig->logo_point = Context::get('logo_point')?Context::get('logo_point'):$this->logo_point;
         	$ipConfig->logo_style = Context::get('logo_style')?Context::get('logo_style'):$this->font_style;
-	        if(!$ipConfig->logo_quality || $ipConfig->logo_quality > 100) $ipConfig->logo_quality = 100;
         	$ipConfig->logo_position = Context::get('logo_position');
 	        if(!$ipConfig->logo_position) $ipConfig->logo_position = 'south';
 		$ipConfig->nologogroup = str_replace('|@|',';',trim(Context::get('nologogroup')));
@@ -179,6 +185,7 @@ class imageprocessAdminController extends imageprocess
 	        $ipConfig->logo_bg = $this->checkColor( $bg );
 
         	if(!$ipConfig->logo_ext) $ipConfig->logo_ext = 'jpg';
+
         	$oModuleController->insertModuleConfig('imageprocess', $ipConfig);
 	        if (class_exists('BaseObject')) return new BaseObject(0,"success_updated");
         	else return new Object(0,"success_updated");
